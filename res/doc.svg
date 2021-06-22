@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   sodipodi:docname="doc.svg"
+   inkscape:export-filename="/home/louisdevie/brut/brut-code/res/missing.png"
+   inkscape:export-xdpi="22.577778"
+   inkscape:export-ydpi="22.577778"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#7a7a7a"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:document-units="cm"
+     showgrid="true"
+     inkscape:zoom="2"
+     inkscape:cx="74.25"
+     inkscape:cy="83.25"
+     inkscape:window-width="1366"
+     inkscape:window-height="704"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     borderlayer="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid29"
+       units="mm"
+       spacingx="1"
+       spacingy="1"
+       empspacing="4"
+       color="#5458dd"
+       opacity="0.55686275"
+       empcolor="#2626ff"
+       empopacity="0.52941176" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2">
+    <inkscape:path-effect
+       effect="powerstroke"
+       id="path-effect2506"
+       is_visible="true"
+       lpeversion="1"
+       offset_points="0,0"
+       not_jump="false"
+       sort_points="true"
+       interpolator_type="CubicBezierJohan"
+       interpolator_beta="0.2"
+       start_linecap_type="zerowidth"
+       linejoin_type="extrp_arc"
+       miter_limit="4"
+       scale_width="1"
+       end_linecap_type="zerowidth" />
+    <inkscape:path-effect
+       effect="powerstroke"
+       id="path-effect66"
+       is_visible="true"
+       lpeversion="1"
+       offset_points="5.1810408e-16,-4.4408921e-16"
+       not_jump="false"
+       sort_points="true"
+       interpolator_type="CubicBezierJohan"
+       interpolator_beta="0.2"
+       start_linecap_type="zerowidth"
+       linejoin_type="extrp_arc"
+       miter_limit="4"
+       scale_width="1"
+       end_linecap_type="zerowidth" />
+  </defs>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.0267086;stroke-opacity:1"
+       d="m 4,4 h 12 l -4,4 v 8 h 4 V 9 l 1,-1 h 10 l 1,1 0,10 -8,8 0,5 h 4 l 0,-4 8,-8 V 8 L 28,4 h 12 l 0,36 H 24 l 0,-4 h -4 v 4 H 4 Z"
+       id="path2956"
+       sodipodi:nodetypes="ccccccccccccccccccccccccc" />
+  </g>
+</svg>
