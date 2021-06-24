@@ -2,9 +2,12 @@
 
 #include <stdio.h>
 #include <string>
+#include <fstream>
+#include <iostream>
 
 int RES_ICON = 0;
 int RES_FONT = 1;
+int RES_LANG = 2;
 
 bool isBoundedToCoords(int, int, int, int, int, int);
 bool isBoundedToRect(int, int, int, int, int, int);
@@ -35,6 +38,9 @@ std::string getResourcePath(int type, std::string resource) {
 	}
 	if (type == RES_FONT) {
 		return "res/fonts/SourceSansPro-" + resource + ".ttf";
+	}
+	if (type == RES_LANG) {
+		return "res/languages/" + resource + ".lang";
 	}
 	return "";
 }
@@ -68,4 +74,21 @@ void logError(std::string errmsg, bool sdlerr) {
 
 void logInfo(std::string errmsg) {
 	printf((INF + errmsg + "\n").c_str());
+}
+
+std::string _LANG[5];
+
+void loadLang(){
+	std::fstream langfile;
+	int i=0;
+
+	langfile.open(getResourcePath(RES_LANG, "en"), std::ios::in);
+	if (langfile.is_open()) {
+		while(getline(langfile, _LANG[i])) {i++;}
+		langfile.close();
+	}
+}
+
+std::string getCaption(int i) {
+	return _LANG[i];
 }

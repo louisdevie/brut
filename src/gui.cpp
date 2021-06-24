@@ -3,14 +3,15 @@
 #include </usr/include/SDL2/SDL_image.h>
 
 #include "menubar.cpp"
+#include "utils.cpp"
 
 SDL_Window *WINDOW = NULL;
 SDL_Renderer *RENDERER = NULL;
 int WIDTH, HEIGHT;
 
-TTF_Font *FONT_INTERFACE;
-SDL_Surface *ICON_MISING;
-SDL_Surface *ICON_OPEN;
+TTF_Font *FONT_INTERFACE = NULL;
+SDL_Surface *ICON_MISSING = NULL;
+SDL_Surface *ICON_MENUBAR[NTABS];
 
 SDL_Event event;
 
@@ -77,19 +78,24 @@ void GUI_LoadResources() {
 		fprintf(stderr, "error loading font: %s", SDL_GetError());
 	}
 
-	ICON_MISING = IMG_Load(getResourcePath(RES_ICON, "missing").c_str());
-	if (!ICON_MISING)
+	ICON_MISSING = IMG_Load(getResourcePath(RES_ICON, "missing").c_str());
+	if (!ICON_MISSING)
 	{
 		fprintf(stderr, "error loading fallback icon: %s", SDL_GetError());
-		ICON_MISING = SDL_CreateRGBSurface(0, 32, 32, 32, rmask, gmask, bmask, amask);
+		ICON_MISSING = SDL_CreateRGBSurface(0, 32, 32, 32, rmask, gmask, bmask, amask);
 	}
-	ICON_OPEN = IMG_Load(getResourcePath(RES_ICON, "open").c_str());
-	if (!ICON_OPEN)
-	{
-		logError("error loading icon \"OPEN\": %s", 1);
-		ICON_OPEN = SDL_CreateRGBSurface(0, 32, 32, 32, rmask, gmask, bmask, amask);
-		SDL_BlitSurface(ICON_MISING, NULL, ICON_OPEN, NULL);
+	std::string icons[NTABS] = {"open", "clock", "save", "copy", "sliders"};
+	for (int i=0; i<NTABS; i++) {
+		ICON_MENUBAR[i] = IMG_Load(getResourcePath(RES_ICON, icons[i]).c_str());
+		if (!ICON_MENUBAR[i])
+		{
+			logError("error loading icon: %s", 1);
+			ICON_MENUBAR[i] = SDL_CreateRGBSurface(0, 32, 32, 32, rmask, gmask, bmask, amask);
+			SDL_BlitSurface(ICON_MISSING, NULL, ICON_MENUBAR[i], NULL);
+		}
 	}
+
+	loadLang();
 }
 
 void GUI_UnloadResources() {
@@ -97,8 +103,10 @@ void GUI_UnloadResources() {
 
 	TTF_CloseFont(FONT_INTERFACE); 
 
-	SDL_FreeSurface(ICON_MISING);
-	SDL_FreeSurface(ICON_OPEN);
+	SDL_FreeSurface(ICON_MISSING);
+	for (int i=0; i<NTABS; i++) {
+		SDL_FreeSurface(ICON_MENUBAR[i]);
+	}
 }
 
 void GUI_GenerateTextures() {
@@ -109,14 +117,14 @@ void GUI_GenerateTextures() {
 	SDL_Rect textPos = {42, 0, 32, 32};
 	for (int i=0; i<NTABS; i++) {
 
-		SDL_Surface *text = TTF_RenderUTF8_Blended(FONT_INTERFACE, "Tab", COLOR.TEXT);
+		SDL_Surface *text = TTF_RenderUTF8_Blended(FONT_INTERFACE, getCaption(i).c_str(), COLOR.TEXT);
 		textPos.y = 16 - text->h/2;
 		textPos.w = text->w;
 		textPos.h = text->h;
 
 		SDL_Surface *surface = SDL_CreateRGBSurface(0, textPos.x+textPos.w, 32, 32, rmask, gmask, bmask, amask);
 
-		SDL_BlitSurface(ICON_OPEN, NULL, surface, &iconPos);
+		SDL_BlitSurface(ICON_MENUBAR[i], NULL, surface, &iconPos);
 		SDL_BlitSurface(text, NULL, surface, &textPos);
 		TEXTURE_MENUBAR[i] = SDL_CreateTextureFromSurface(RENDERER, surface);
 
