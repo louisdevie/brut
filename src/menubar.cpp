@@ -1,103 +1,88 @@
 #include "utils.cpp"
 
-#define NTABS 5
+#define NTABS 6
 
-class MenuBar {
-public:
-	MenuBar();
-	void mouseMotion(int, int);
-	void update(int, int);
-	SDL_Rect *getTabRect(int);
-	void textureSize(int, int);
-	SDL_Rect *getSrcRect(int);
-	SDL_Rect *getDstRect(int);
-	int focused();
-private:
-	SDL_Rect _tabRects[NTABS];
-	int _texsize[NTABS];
-	SDL_Rect _texsrc[NTABS];
-	SDL_Rect _texdst[NTABS];
-	int _focus;
-};
+SDL_Rect menuBarButtonRects[NTABS];
+int menuBarTexSize[NTABS];
+SDL_Rect menuBarTexSrc[NTABS];
+SDL_Rect menuBarTexDst[NTABS];
+int menuBarFocus;
 
-MenuBar::MenuBar() {
-	this->_focus = -1;
+void menuBarInit() {
+	menuBarFocus = -1;
 
 	for (int i=0; i<NTABS; i++) {
-		this->_tabRects[i].y = 10;
-		this->_tabRects[i].h = 50;
-		this->_texsrc[i].x = 0;
-		this->_texsrc[i].y = 0;
+		menuBarButtonRects[i].y = 10;
+		menuBarButtonRects[i].h = 50;
+		menuBarTexSrc[i].x = 0;
+		menuBarTexSrc[i].y = 0;
 	}
 }
 
-void MenuBar::mouseMotion(int mouseX, int mouseY) {
-	this->_focus = -1;
+bool menuBarMouseMotion(int mouseX, int mouseY) {
+	menuBarFocus = -1;
 	for (int i=0; i<NTABS; i++) {
-		if (isBoundedToRect(mouseX, mouseY,
-							this->_tabRects[i].x,
-							this->_tabRects[i].y,
-							this->_tabRects[i].w,
-							this->_tabRects[i].h)) {
-			this->_focus = i;
-			break;
+		if (isBoundedToRect(mouseX, mouseY, &menuBarButtonRects[i])) {
+			menuBarFocus = i;
+			return true;
 		}
 	}
+	return false;
 }
 
-void MenuBar::update(int W, int H) {
-	if (this->_focus == -1) {
+void menuBarUpdate(int W, int H) {
+	if (menuBarFocus == -1) {
 		for (int i=0; i<NTABS; i++) {
-			this->_tabRects[i].x = 10+((W-20)/NTABS)*i;
-			this->_tabRects[i].w = (W-20)/NTABS;
-			this->_texsrc[i].w = 32;
-			this->_texdst[i].x = this->_tabRects[i].x + this->_tabRects[i].w/2 - 16;
-			this->_texdst[i].w = 32;
+			menuBarButtonRects[i].x = 10+((W-20)/NTABS)*i;
+			menuBarButtonRects[i].w = (W-20)/NTABS;
+			menuBarTexSrc[i].w = 32;
+			menuBarTexDst[i].x = menuBarButtonRects[i].x + menuBarButtonRects[i].w/2 - 16;
+			menuBarTexDst[i].w = 32;
 		}
 	} else {
 		for (int i=0; i<NTABS; i++) {
-			if (i == this->_focus) {
-				this->_tabRects[i].x = 10+80*i;
-				this->_tabRects[i].w = W+60-(80*NTABS);
-				this->_texsrc[i].w = this->_texsize[i];
-				this->_texdst[i].x = this->_tabRects[i].x + this->_tabRects[i].w/2 - this->_texsize[i]/2;
-				this->_texdst[i].w = this->_texsize[i];
+			if (i == menuBarFocus) {
+				menuBarButtonRects[i].x = 10+80*i;
+				menuBarButtonRects[i].w = W+60-(80*NTABS);
+				menuBarTexSrc[i].w = menuBarTexSize[i];
+				menuBarTexDst[i].x = menuBarButtonRects[i].x + menuBarButtonRects[i].w/2 - menuBarTexSize[i]/2;
+				menuBarTexDst[i].w = menuBarTexSize[i];
 			} else {
-				if (i < this->_focus) {
-					this->_tabRects[i].x = 10+80*i;
-					this->_tabRects[i].w = 80;
+				if (i < menuBarFocus) {
+					menuBarButtonRects[i].x = 10+80*i;
+					menuBarButtonRects[i].w = 80;
 				} else {
-					this->_tabRects[i].x = W-10-(80*(NTABS-i));
-					this->_tabRects[i].w = 80;
+					menuBarButtonRects[i].x = W-10-(80*(NTABS-i));
+					menuBarButtonRects[i].w = 80;
 				}
-				this->_texsrc[i].w = 32;
-				this->_texdst[i].x = this->_tabRects[i].x + this->_tabRects[i].w/2 - 16;
-				this->_texdst[i].w = 32;
+				menuBarTexSrc[i].w = 32;
+				menuBarTexDst[i].x = menuBarButtonRects[i].x + menuBarButtonRects[i].w/2 - 16;
+				menuBarTexDst[i].w = 32;
 			}
 		}
 	}
 }
 
-SDL_Rect *MenuBar::getTabRect(int i) {
-	return &this->_tabRects[i];
+SDL_Rect *menuBarGetButtonRect(int i) {
+	return &menuBarButtonRects[i];
 }
 
-void MenuBar::textureSize(int i, int w) {
-	this->_texsize[i] = w;
+void menuBarTextureSize(int i, int w) {
+	menuBarTexSize[i] = w;
 
-	this->_texsrc[i].h = 32;
-	this->_texdst[i].h = 32;
-	this->_texdst[i].y = this->_tabRects[i].y + this->_tabRects[i].h/2 - 16;
+	menuBarTexSrc[i].h = 32;
+	menuBarTexDst[i].h = 32;
+	menuBarTexDst[i].y = menuBarButtonRects[i].y + menuBarButtonRects[i].h/2 - 16;
 }
 
-SDL_Rect *MenuBar::getSrcRect(int i) {
-	return &this->_texsrc[i];
+SDL_Rect *menuBarGetSrcRect(int i) {
+	return &menuBarTexSrc[i];
 }
 
-SDL_Rect *MenuBar::getDstRect(int i) {
-	return &this->_texdst[i];
+SDL_Rect *menuBarGetDstRect(int i) {
+	return &menuBarTexDst[i];
 }
 
-int MenuBar::focused() {
-	return this->_focus;
+int menuBarFocused() {
+	return menuBarFocus;
 }

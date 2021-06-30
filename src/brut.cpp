@@ -1,4 +1,5 @@
 #include "gui.cpp"
+#include "filemanager.cpp"
 
 int main(int argc, char** args)
 {
@@ -10,6 +11,8 @@ int main(int argc, char** args)
 	GUI_OpenWindow();
 	GUI_LoadResources();
 	GUI_GenerateTextures();
+
+	updateOpenFilesCount();
 
 	while (!GUI_QUIT)
 	{

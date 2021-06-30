@@ -3,7 +3,11 @@
 #include </usr/include/SDL2/SDL_image.h>
 
 #include "menubar.cpp"
+#include "filetabs.cpp"
+#include "docview.cpp"
+#include "bottombar.cpp"
 #include "utils.cpp"
+#include "filemanager.cpp"
 
 SDL_Window *WINDOW = NULL;
 SDL_Renderer *RENDERER = NULL;
@@ -17,24 +21,22 @@ SDL_Event event;
 
 bool GUI_QUIT = false;
 
-struct palette
-{
-	SDL_Color BG;
-	SDL_Color FG;
-	SDL_Color SEL;
-	SDL_Color TEXT;
-};
-
 palette COLOR = {
-	{230, 230, 230, 255},
+	{215, 215, 215, 255},
 	{255, 255, 255, 255},
 	{128, 192, 255, 255},
 	{  0,   0,   0, 255},
 };
 
-MenuBar UI_MENUBAR;
 SDL_Texture *TEXTURE_MENUBAR[NTABS];
 void drawMenuBar();
+
+void drawFileTabs();
+
+SDL_Texture *TEXTURE_NOFILE;
+void drawDocumentView();
+
+void drawBottomBar();
 
 int GUI_Init()
 {
@@ -84,7 +86,7 @@ void GUI_LoadResources() {
 		fprintf(stderr, "error loading fallback icon: %s", SDL_GetError());
 		ICON_MISSING = SDL_CreateRGBSurface(0, 32, 32, 32, rmask, gmask, bmask, amask);
 	}
-	std::string icons[NTABS] = {"open", "clock", "save", "copy", "sliders"};
+	std::string icons[NTABS] = {"open", "clock", "save", "copy", "sliders", "info"};
 	for (int i=0; i<NTABS; i++) {
 		ICON_MENUBAR[i] = IMG_Load(getResourcePath(RES_ICON, icons[i]).c_str());
 		if (!ICON_MENUBAR[i])
@@ -111,29 +113,46 @@ void GUI_UnloadResources() {
 
 void GUI_GenerateTextures() {
 	logInfo("GUI: generating textures ...");
-	
-	int texW = 0;
-	SDL_Rect iconPos = {0, 0, 32, 32};
-	SDL_Rect textPos = {42, 0, 32, 32};
+
+	SDL_Rect rect1 = {0, 0, 32, 32};
+	SDL_Rect rect2 = {42, 0, 32, 32};
 	for (int i=0; i<NTABS; i++) {
 
 		SDL_Surface *text = TTF_RenderUTF8_Blended(FONT_INTERFACE, getCaption(i).c_str(), COLOR.TEXT);
-		textPos.y = 16 - text->h/2;
-		textPos.w = text->w;
-		textPos.h = text->h;
+		rect2.y = 16 - text->h/2;
+		rect2.w = text->w;
+		rect2.h = text->h;
 
-		SDL_Surface *surface = SDL_CreateRGBSurface(0, textPos.x+textPos.w, 32, 32, rmask, gmask, bmask, amask);
+		SDL_Surface *surface = SDL_CreateRGBSurface(0, rect2.x+rect2.w, 32, 32, rmask, gmask, bmask, amask);
 
-		SDL_BlitSurface(ICON_MENUBAR[i], NULL, surface, &iconPos);
-		SDL_BlitSurface(text, NULL, surface, &textPos);
+		SDL_BlitSurface(ICON_MENUBAR[i], NULL, surface, &rect1);
+		SDL_BlitSurface(text, NULL, surface, &rect2);
 		TEXTURE_MENUBAR[i] = SDL_CreateTextureFromSurface(RENDERER, surface);
 
 		SDL_FreeSurface(surface);
 		SDL_FreeSurface(text);
 
-		SDL_QueryTexture(TEXTURE_MENUBAR[i], NULL, NULL, &texW, NULL);
-		UI_MENUBAR.textureSize(i, texW);
+		menuBarTextureSize(i, rect2.x+rect2.w);
 	}
+
+	SDL_Surface *nofilemsg = TTF_RenderUTF8_Blended(FONT_INTERFACE, getCaption(NTABS).c_str(), COLOR.TEXT);
+	rect1.w = nofilemsg->w;
+	rect1.h = nofilemsg->h;
+	SDL_Surface *nofilebtn = TTF_RenderUTF8_Blended(FONT_INTERFACE, getCaption(NTABS+1).c_str(), COLOR.TEXT);
+	rect2.w = nofilebtn->w;
+	rect2.h = nofilebtn->h;
+	rect1.x = maxi(rect2.w-rect1.w, 0)/2;
+	rect1.y = 0;
+	rect2.x = maxi(rect1.w-rect2.w, 0)/2;
+	rect2.y = rect1.h+40;
+	SDL_Surface *nofilesurface = SDL_CreateRGBSurface(0, maxi(rect1.w, rect2.w), rect2.y+rect2.h, 32, rmask, gmask, bmask, amask);
+	SDL_BlitSurface(nofilemsg, NULL, nofilesurface, &rect1);
+	SDL_BlitSurface(nofilebtn, NULL, nofilesurface, &rect2);
+	TEXTURE_NOFILE = SDL_CreateTextureFromSurface(RENDERER, nofilesurface);
+	noFileTextureSize(nofilesurface->w, nofilesurface->h, rect2.w, rect2.h);
+	SDL_FreeSurface(nofilemsg);
+	SDL_FreeSurface(nofilebtn);
+	SDL_FreeSurface(nofilesurface);
 }
 
 void GUI_DestroyTextures() {
@@ -142,6 +161,8 @@ void GUI_DestroyTextures() {
 	for (int i=0; i<NTABS; i++) {
 		SDL_DestroyTexture(TEXTURE_MENUBAR[i]);
 	}
+
+	SDL_DestroyTexture(TEXTURE_NOFILE);
 }
 
 void GUI_OpenWindow() {
@@ -166,6 +187,11 @@ void GUI_OpenWindow() {
 		SDL_WINDOW_SHOWN
 	);
 	RENDERER = SDL_CreateRenderer(WINDOW, -1, 0);
+
+	menuBarInit();
+	fileTabsInit();
+	documentViewInit();
+	bottomBarInit();
 }
 
 void GUI_CloseWindow() {
@@ -181,9 +207,19 @@ void GUI_HandleEvents()
 	{
 		switch (event.type)
 		{
-			case SDL_QUIT: GUI_QUIT = true;
+			case SDL_QUIT:
+				GUI_QUIT = true;
+				break;
 
-			case SDL_MOUSEMOTION: UI_MENUBAR.mouseMotion(event.motion.x, event.motion.y);
+			case SDL_MOUSEMOTION:
+				if (menuBarMouseMotion(event.motion.x, event.motion.y)) {
+					//break;
+				}
+				if (fileTabsMouseMotion(event.motion.x, event.motion.y)) {
+					//break;
+				}
+				documentViewMouseMotion(event.motion.x, event.motion.y);
+				break;
 		}
 	}
 }
@@ -193,23 +229,55 @@ void GUI_UpdateWindow()
 	SDL_SetRenderDrawColor(RENDERER, COLOR.BG.r, COLOR.BG.g, COLOR.BG.b, 255);
 	SDL_RenderClear(RENDERER);
 
-	UI_MENUBAR.update(WIDTH, HEIGHT);
+	menuBarUpdate(WIDTH, HEIGHT);
+	fileTabsUpdate(WIDTH, HEIGHT);
+	documentViewUpdate(WIDTH, HEIGHT);
+	bottomBarUpdate(WIDTH, HEIGHT);
 
 	drawMenuBar();
+	drawFileTabs();
+	drawDocumentView();
+	drawBottomBar();
 
 	SDL_RenderPresent(RENDERER);
 	SDL_Delay(30);
 }
 
 void drawMenuBar() {
-	int focused = UI_MENUBAR.focused();
+	int focused = menuBarFocused();
 	for (int i=0; i<NTABS; i++) {
 		if (i == focused) {
 			SDL_SetRenderDrawColor(RENDERER, COLOR.SEL.r, COLOR.SEL.g, COLOR.SEL.b, 255);
 		} else {
 			SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
 		}
-		SDL_RenderFillRect(RENDERER, UI_MENUBAR.getTabRect(i));
-		SDL_RenderCopy(RENDERER, TEXTURE_MENUBAR[i], UI_MENUBAR.getSrcRect(i), UI_MENUBAR.getDstRect(i));
+		SDL_RenderFillRect(RENDERER, menuBarGetButtonRect(i));
+		SDL_RenderCopy(RENDERER, TEXTURE_MENUBAR[i], menuBarGetSrcRect(i), menuBarGetDstRect(i));
 	}
+}
+
+void drawFileTabs() {
+	for (int i=0; i<openFilesCount; i++) {
+		SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
+		SDL_RenderFillRect(RENDERER, fileTabsGetTabRect(i));
+	}
+}
+
+void drawDocumentView() {
+	if (openFilesCount) {
+		SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
+		SDL_RenderFillRect(RENDERER, documentViewGetRect(0));
+	} else {
+		if (noFileFocused()) {
+			SDL_SetRenderDrawColor(RENDERER, COLOR.SEL.r, COLOR.SEL.g, COLOR.SEL.b, 255);
+		} else {
+			SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
+		}
+		SDL_RenderFillRect(RENDERER, noFileGetBtnRect());
+		SDL_RenderCopy(RENDERER, TEXTURE_NOFILE, NULL, noFileGetRect());
+	}
+}
+
+void drawBottomBar() {
+
 }
