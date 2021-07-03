@@ -4,18 +4,25 @@ SDL_Rect documentViewRect;
 
 SDL_Rect noFileRect;
 SDL_Rect noFileBtnRect;
-bool noFileBtnFocus = false;
+bool noFileBtnFocus;
+bool noFileBtnPrevFocus;
+AnimatedInt noFileBtnRed;
+AnimatedInt noFileBtnGreen;
+AnimatedInt noFileBtnBlue;
 
 void documentViewInit() {
 	documentViewRect.x = 10;
 	documentViewRect.y = 95;
+
+	noFileBtnFocus = false;
+	noFileBtnPrevFocus = true;
 }
 
 bool documentViewMouseMotion(int mouseX, int mouseY) {
 	if (openFilesCount) {
 
 	} else {
-		noFileBtnFocus = isBoundedToRect(mouseX, mouseY, &noFileBtnRect);
+		noFileBtnFocus = isBoundedToSDLRect(mouseX, mouseY, &noFileBtnRect);
 		return noFileBtnFocus;
 	}
 }
@@ -30,6 +37,28 @@ void documentViewUpdate(int W, int H) {
 		noFileRect.y = documentViewRect.y + documentViewRect.h/2 - noFileRect.h/2;
 		noFileBtnRect.x = noFileRect.x + noFileRect.w/2 - noFileBtnRect.w/2;
 		noFileBtnRect.y = noFileRect.y + noFileRect.h + 10 - noFileBtnRect.h;
+
+		if (noFileBtnFocus) {
+			if (!noFileBtnPrevFocus) {
+				noFileBtnRed.goTo(COLOR.HOVER.r);
+				noFileBtnGreen.goTo(COLOR.HOVER.g);
+				noFileBtnBlue.goTo(COLOR.HOVER.b);
+			}
+			noFileBtnRed.update(20);
+			noFileBtnGreen.update(20);
+			noFileBtnBlue.update(20);
+		} else {
+			if (noFileBtnPrevFocus) {
+				noFileBtnRed.goTo(COLOR.FG.r);
+				noFileBtnGreen.goTo(COLOR.FG.g);
+				noFileBtnBlue.goTo(COLOR.FG.b);
+			}
+			noFileBtnRed.fastForward();
+			noFileBtnGreen.fastForward();
+			noFileBtnBlue.fastForward();
+		}
+
+		noFileBtnPrevFocus = noFileBtnFocus;
 	}
 }
 

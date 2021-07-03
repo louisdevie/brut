@@ -21,13 +21,6 @@ SDL_Event event;
 
 bool GUI_QUIT = false;
 
-palette COLOR = {
-	{215, 215, 215, 255},
-	{255, 255, 255, 255},
-	{128, 192, 255, 255},
-	{  0,   0,   0, 255},
-};
-
 SDL_Texture *TEXTURE_MENUBAR[NTABS];
 void drawMenuBar();
 
@@ -247,11 +240,12 @@ void drawMenuBar() {
 	int focused = menuBarFocused();
 	for (int i=0; i<NTABS; i++) {
 		if (i == focused) {
-			SDL_SetRenderDrawColor(RENDERER, COLOR.SEL.r, COLOR.SEL.g, COLOR.SEL.b, 255);
+			SDL_SetRenderDrawColor(RENDERER, COLOR.HOVER.r, COLOR.HOVER.g, COLOR.HOVER.b, 255);
 		} else {
 			SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
 		}
-		SDL_RenderFillRect(RENDERER, menuBarGetButtonRect(i));
+		SDL_Rect buttonRect = menuBarGetButtonRect(i);
+		SDL_RenderFillRect(RENDERER, &buttonRect);
 		SDL_RenderCopy(RENDERER, TEXTURE_MENUBAR[i], menuBarGetSrcRect(i), menuBarGetDstRect(i));
 	}
 }
@@ -268,11 +262,7 @@ void drawDocumentView() {
 		SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
 		SDL_RenderFillRect(RENDERER, documentViewGetRect(0));
 	} else {
-		if (noFileFocused()) {
-			SDL_SetRenderDrawColor(RENDERER, COLOR.SEL.r, COLOR.SEL.g, COLOR.SEL.b, 255);
-		} else {
-			SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
-		}
+		SDL_SetRenderDrawColor(RENDERER, noFileBtnRed.get(), noFileBtnGreen.get(), noFileBtnBlue.get(), 255);
 		SDL_RenderFillRect(RENDERER, noFileGetBtnRect());
 		SDL_RenderCopy(RENDERER, TEXTURE_NOFILE, NULL, noFileGetRect());
 	}

@@ -25,7 +25,11 @@ bool isBoundedToCoords(int x, int y, int x1, int y1, int x2, int y2) {
 	return true;
 }
 
-bool isBoundedToRect(int x, int y, SDL_Rect *rect) {
+bool isBoundedToRect(int x, int y, int x1, int y1, int w, int h) {
+	return isBoundedToCoords(x, y, x1, y1, x1+w, y1+h);
+}
+
+bool isBoundedToSDLRect(int x, int y, SDL_Rect *rect) {
 	return isBoundedToCoords(x, y, rect->x, rect->y, rect->x+rect->w, rect->y+rect->h);
 }
 
@@ -45,6 +49,10 @@ std::string getResourcePath(int type, std::string resource) {
 int mini(int a, int b) {return (a <= b) ? a : b;}
 
 int maxi(int a, int b) {return (a >= b) ? a : b;}
+
+float mapValue(float x, float fromMin, float fromMax, float toMin, float toMax) {
+	return toMin+(((x-fromMin)/(fromMax-fromMin))*(toMax-toMin));
+}
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 Uint32 rmask = 0xff000000;
@@ -105,6 +113,53 @@ struct palette
 {
 	SDL_Color BG;
 	SDL_Color FG;
-	SDL_Color SEL;
+	SDL_Color HOVER;
 	SDL_Color TEXT;
+};
+
+palette COLOR = {
+	{215, 215, 215, 255},
+	{255, 255, 255, 255},
+	{128, 192, 255, 255},
+	{  0,   0,   0, 255},
+};
+
+
+class AnimatedInt
+{
+public:
+	int get() {
+		if (this->notCached) {
+			this->notCached = false;
+			this->cachedValue = mapValue(this->progress, 0, 100, this->start, this->end);
+		}
+		return this->cachedValue;
+	};
+	void goTo(int x) {
+		this->start = this->get();
+		this->end = x;
+		this->progress = 0;
+		this->notCached = true;
+	};
+	void update(int steps) {
+		if (this->progress < 100) {
+			this->progress += steps;
+			if (this->progress > 100) {
+				this->progress = 100;
+			}
+			this->notCached = true;
+		}
+	};
+	void fastForward() {
+		if (this->progress != 100) {
+			this->progress = 100;
+			this->notCached = true;
+		}
+	};
+private:
+	int progress;
+	int start;
+	int end;
+	bool notCached;
+	int cachedValue;
 };
