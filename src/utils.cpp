@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iostream>
 
+int WIDTH, HEIGHT;
+
 int RES_ICON = 0;
 int RES_FONT = 1;
 int RES_LANG = 2;
@@ -163,3 +165,30 @@ private:
 	bool notCached;
 	int cachedValue;
 };
+
+void createNewFile();
+
+int mode;
+int prevMode;
+const int STARTUP = 0;
+const int NOFILE = 1;
+const int DOCUMENT = 2;
+int _viewX = 0;
+
+void setMode(int newMode) {
+	if (newMode != mode) {
+		mode = newMode;
+		_viewX = WIDTH*10;
+	}
+}
+int getViewX() {
+	return _viewX/10;
+}
+void slideView() {
+	if (_viewX > 5) {
+		_viewX -= _viewX/5;
+	} else if (_viewX > 0) {
+		prevMode = mode;
+		_viewX = 0;
+	}
+}

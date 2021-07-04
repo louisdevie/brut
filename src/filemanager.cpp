@@ -5,9 +5,10 @@
 
 int openFilesCount;
 
-class File
+struct File
 {
-
+	std::string name;
+	std::string path;
 };
 
 std::vector<File> openFiles;

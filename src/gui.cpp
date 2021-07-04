@@ -11,7 +11,6 @@
 
 SDL_Window *WINDOW = NULL;
 SDL_Renderer *RENDERER = NULL;
-int WIDTH, HEIGHT;
 
 TTF_Font *FONT_INTERFACE = NULL;
 SDL_Surface *ICON_MISSING = NULL;
@@ -223,9 +222,11 @@ void GUI_UpdateWindow()
 	SDL_SetRenderDrawColor(RENDERER, COLOR.BG.r, COLOR.BG.g, COLOR.BG.b, 255);
 	SDL_RenderClear(RENDERER);
 
+	slideView();
+
 	menuBarUpdate(WIDTH, HEIGHT);
 	fileTabsUpdate(WIDTH, HEIGHT);
-	documentViewUpdate(WIDTH, HEIGHT);
+	documentViewUpdate();
 	bottomBarUpdate(WIDTH, HEIGHT);
 
 	drawMenuBar();
@@ -254,18 +255,18 @@ void drawMenuBar() {
 void drawFileTabs() {
 	for (int i=0; i<openFilesCount; i++) {
 		SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
-		SDL_RenderFillRect(RENDERER, fileTabsGetTabRect(i));
+		//SDL_RenderFillRect(RENDERER, fileTabsGetTabRect(i));
 	}
 }
 
 void drawDocumentView() {
-	if (openFilesCount) {
-		SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
-		SDL_RenderFillRect(RENDERER, documentViewGetRect(0));
-	} else {
+	if (mode == NOFILE) {
 		SDL_SetRenderDrawColor(RENDERER, noFileBtn.getColorRed(), noFileBtn.getColorGreen(), noFileBtn.getColorBlue(), 255);
 		SDL_RenderFillRect(RENDERER, noFileBtn.getRect());
 		SDL_RenderCopy(RENDERER, TEXTURE_NOFILE, NULL, noFileGetRect());
+	} else if (mode == DOCUMENT) {
+		SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
+		SDL_RenderFillRect(RENDERER, documentViewGetRect());
 	}
 }
 

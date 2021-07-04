@@ -3,28 +3,30 @@
 
 SDL_Rect documentViewRect;
 
+int startupcounter;
+
 SDL_Rect noFileRect;
 Button noFileBtn;
 
 void documentViewInit() {
-	documentViewRect.x = 10;
 	documentViewRect.y = 95;
+	mode = STARTUP;
+	prevMode = STARTUP;
+	startupcounter = 15;
 
 	noFileBtn.init();
+	noFileBtn.bindTo(createNewFile);
 }
 
 bool documentViewMouseMotion(int mouseX, int mouseY) {
-	if (openFilesCount) {
-		return false;
-	} else {
+	if (mode == NOFILE) {
 		return noFileBtn.mouseMotion(mouseX, mouseY);
 	}
+	return false;
 }
 
 bool documentViewMouseDown(int btn, int mouseX, int mouseY) {
-	if (openFilesCount) {
-
-	} else {
+	if (mode == NOFILE) {
 		if (btn==SDL_BUTTON_LEFT) {
 			return noFileBtn.leftMouseDown(mouseX, mouseY);
 		}
@@ -33,9 +35,7 @@ bool documentViewMouseDown(int btn, int mouseX, int mouseY) {
 }
 
 bool documentViewMouseUp(int btn, int mouseX, int mouseY) {
-	if (openFilesCount) {
-
-	} else {
+	if (mode == NOFILE) {
 		if (btn == SDL_BUTTON_LEFT) {
 			return noFileBtn.leftMouseUp(mouseX, mouseY);
 		}
@@ -43,29 +43,42 @@ bool documentViewMouseUp(int btn, int mouseX, int mouseY) {
 	return false;
 }
 
-void documentViewUpdate(int W, int H) {
-	documentViewRect.w = W-20;
-	documentViewRect.h = H-140;
-	if (openFilesCount) {
+void documentViewUpdate() {
+	switch (mode) {
+	case STARTUP:
+		if (startupcounter) {
+			startupcounter --;
+		} else {
+			setMode(NOFILE);
+		}
+		break;
 
-	} else {
+	case NOFILE:
 		noFileRect.x = documentViewRect.x + documentViewRect.w/2 - noFileRect.w/2;
 		noFileRect.y = documentViewRect.y + documentViewRect.h/2 - noFileRect.h/2;
 		noFileBtn.place(
 			noFileRect.x + noFileRect.w/2 - noFileBtn.getNormalRect()->w/2,
 			noFileRect.y + noFileRect.h + 10 - noFileBtn.getNormalRect()->h  );
 		noFileBtn.update();
+		break;
 	}
+
+	documentViewRect.x = getViewX()+10;
+	documentViewRect.w = WIDTH-20;
+	documentViewRect.h = HEIGHT-140;
 }
 
-SDL_Rect *documentViewGetRect(int i) {
+SDL_Rect *documentViewGetRect() {
 	return &documentViewRect;
 }
 
 void noFileTextureSize(int w, int h, int w2, int h2) {
+	noFileRect.x = 0;
+	noFileRect.y = -h;
 	noFileRect.w = w;
 	noFileRect.h = h;
 	noFileBtn.resize(w2+30, h2+20);
+	noFileBtn.place(0, -h2-20);
 }
 
 SDL_Rect *noFileGetRect() {

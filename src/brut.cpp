@@ -28,3 +28,9 @@ int main(int argc, char** args)
 
 	return 0;
 }
+
+void createNewFile() {
+	openFiles.push_back({getCaption(NTABS+2), ""});
+	updateOpenFilesCount();
+	setMode(DOCUMENT);
+}

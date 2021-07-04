@@ -17,40 +17,44 @@ public:
 	bool leftMouseDown(int, int);
 	bool leftMouseUp(int, int);
 	void update();
+	void bindTo(void (*)());
 private:
 	SDL_Rect normalrect;
-	SDL_Rect downrect;
+	SDL_Rect isDownrect;
 	bool hasFocus;
 	bool hadFocus;
-	bool down;
+	bool isDown;
+	bool wasDown;
 	AnimatedInt red;
 	AnimatedInt green;
 	AnimatedInt blue;
+	void (*callback)();
 };
 
 void Button::init() {
 	this->hasFocus = false;
 	this->hadFocus = true;
-	this->down = false;
+	this->isDown = false;
+	this->wasDown = true;
 }
 
 void Button::place(int x, int y) {
 	this->normalrect.x = x;
 	this->normalrect.y = y;
-	this->downrect.x = x+2;
-	this->downrect.y = y+2;
+	this->isDownrect.x = x+2;
+	this->isDownrect.y = y+2;
 }
 
 void Button::resize(int w, int h) {
 	this->normalrect.w = w;
 	this->normalrect.h = h;
-	this->downrect.w = w-4;
-	this->downrect.h = h-4;
+	this->isDownrect.w = w-4;
+	this->isDownrect.h = h-4;
 }
 
 SDL_Rect *Button::getRect() {
-	if (this->down) {
-		return &this->downrect;
+	if (this->isDown) {
+		return &this->isDownrect;
 	} else {
 		return &this->normalrect;
 	}
@@ -79,14 +83,14 @@ bool Button::mouseMotion(int mouseX, int mouseY) {
 
 bool Button::leftMouseDown(int mouseX, int mouseY) {
 	if (this->hasFocus) {
-		this->down = true;
+		this->isDown = true;
 		return true;
 	}
 	return false;
 }
 
 bool Button::leftMouseUp(int mouseX, int mouseY) {
-	this->down = false;
+	this->isDown = false;
 	return this->hasFocus;
 }
 
@@ -100,8 +104,11 @@ void Button::update() {
 		this->red.update(20);
 		this->green.update(20);
 		this->blue.update(20);
+		if (!this->isDown && this->wasDown) {
+			this->callback();
+		}
 	} else {
-		if (this->hadFocus) {
+		if (!this->isDown && (this->hadFocus || this->wasDown)) {
 			this->red.goTo(COLOR.FG.r);
 			this->green.goTo(COLOR.FG.g);
 			this->blue.goTo(COLOR.FG.b);
@@ -112,4 +119,9 @@ void Button::update() {
 	}
 
 	this->hadFocus = this->hasFocus;
+	this->wasDown = this->isDown;
+}
+
+void Button::bindTo(void (*function)()) {
+	this->callback = function;
 }
