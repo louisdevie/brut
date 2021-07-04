@@ -1,6 +1,11 @@
 #include "utils.cpp"
 
+/*	top bar
+*/
+
 #define NTABS 6
+// number of buttons
+// idk why I called them "tabs"
 
 AnimatedInt menuBarButtonX[NTABS];
 int menuBarButtonY;
@@ -37,6 +42,7 @@ bool menuBarMouseMotion(int mouseX, int mouseY) {
 	return false;
 }
 
+//TODO: remove parameters and use directly WDTH and HEIGHT instead
 void menuBarUpdate(int W, int H) {
 	if (menuBarFocus != prevMenuBarFocus) {
 		if (menuBarFocus == -1) {
@@ -88,6 +94,10 @@ void menuBarUpdate(int W, int H) {
 
 SDL_Rect menuBarGetButtonRect(int i) {
 	return {menuBarButtonX[i].get(), menuBarButtonY, menuBarButtonW[i].get()+1, menuBarButtonH};
+	/*                                                                      ^~
+										since the width is rounded down sometime there can be a
+							gap of 1 pixel between two buttons so I add 1 to the width to fill it
+	*/
 }
 
 void menuBarTextureSize(int i, int w) {

@@ -5,8 +5,13 @@
 #include <fstream>
 #include <iostream>
 
+/*	everything here is common for all other scripts
+*/
+
+// window size
 int WIDTH, HEIGHT;
 
+// resource type
 int RES_ICON = 0;
 int RES_FONT = 1;
 int RES_LANG = 2;
@@ -48,6 +53,7 @@ std::string getResourcePath(int type, std::string resource) {
 	return "";
 }
 
+// doesn't these already exist in std ?
 int mini(int a, int b) {return (a <= b) ? a : b;}
 
 int maxi(int a, int b) {return (a >= b) ? a : b;}

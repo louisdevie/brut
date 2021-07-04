@@ -3,6 +3,9 @@
 #include "utils.cpp"
 #include <vector>
 
+/*	Manages files.
+*/
+
 int openFilesCount;
 
 struct File

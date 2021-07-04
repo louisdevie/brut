@@ -1,6 +1,9 @@
 #include "utils.cpp"
 #include "button.cpp"
 
+/*	Main view
+*/
+
 SDL_Rect documentViewRect;
 
 int startupcounter;
@@ -12,7 +15,7 @@ void documentViewInit() {
 	documentViewRect.y = 95;
 	mode = STARTUP;
 	prevMode = STARTUP;
-	startupcounter = 15;
+	startupcounter = 10;
 
 	noFileBtn.init();
 	noFileBtn.bindTo(createNewFile);
@@ -46,6 +49,7 @@ bool documentViewMouseUp(int btn, int mouseX, int mouseY) {
 void documentViewUpdate() {
 	switch (mode) {
 	case STARTUP:
+		// wait a little at startup
 		if (startupcounter) {
 			startupcounter --;
 		} else {
@@ -74,11 +78,11 @@ SDL_Rect *documentViewGetRect() {
 
 void noFileTextureSize(int w, int h, int w2, int h2) {
 	noFileRect.x = 0;
-	noFileRect.y = -h;
+	noFileRect.y = -h; // hide by default
 	noFileRect.w = w;
 	noFileRect.h = h;
 	noFileBtn.resize(w2+30, h2+20);
-	noFileBtn.place(0, -h2-20);
+	noFileBtn.place(0, -h2-20); // same
 }
 
 SDL_Rect *noFileGetRect() {

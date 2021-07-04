@@ -2,6 +2,9 @@
 
 #include "utils.cpp"
 
+/*	button class (just a colored rect, the text is separated)
+*/
+
 class Button
 {
 public:
@@ -36,20 +39,22 @@ void Button::init() {
 	this->hadFocus = true;
 	this->isDown = false;
 	this->wasDown = true;
+	// here hadFocus and wasDown are set to true so the color will be
+	// initialised on the first `update` call
 }
 
 void Button::place(int x, int y) {
 	this->normalrect.x = x;
 	this->normalrect.y = y;
 	this->isDownrect.x = x+2;
-	this->isDownrect.y = y+2;
+	this->isDownrect.y = y+2; // the button shrink when clicked
 }
 
 void Button::resize(int w, int h) {
 	this->normalrect.w = w;
 	this->normalrect.h = h;
 	this->isDownrect.w = w-4;
-	this->isDownrect.h = h-4;
+	this->isDownrect.h = h-4; // see above
 }
 
 SDL_Rect *Button::getRect() {
@@ -103,7 +108,7 @@ void Button::update() {
 		}
 		this->red.update(20);
 		this->green.update(20);
-		this->blue.update(20);
+		this->blue.update(20); // fade to the selected color when gaining focus
 		if (!this->isDown && this->wasDown) {
 			this->callback();
 		}
@@ -114,7 +119,7 @@ void Button::update() {
 			this->blue.goTo(COLOR.FG.b);
 			this->red.fastForward();
 			this->green.fastForward();
-			this->blue.fastForward();
+			this->blue.fastForward(); // go back to the normal color instantly when losing focus
 		}
 	}
 

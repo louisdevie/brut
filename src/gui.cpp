@@ -9,6 +9,9 @@
 #include "utils.cpp"
 #include "filemanager.cpp"
 
+/*	SDL stuff, and brings everything together
+*/
+
 SDL_Window *WINDOW = NULL;
 SDL_Renderer *RENDERER = NULL;
 
@@ -85,7 +88,7 @@ void GUI_LoadResources() {
 		{
 			logError("error loading icon: %s", 1);
 			ICON_MENUBAR[i] = SDL_CreateRGBSurface(0, 32, 32, 32, rmask, gmask, bmask, amask);
-			SDL_BlitSurface(ICON_MISSING, NULL, ICON_MENUBAR[i], NULL);
+			SDL_BlitSurface(ICON_MISSING, NULL, ICON_MENUBAR[i], NULL); // use default icon instead
 		}
 	}
 
@@ -127,12 +130,15 @@ void GUI_GenerateTextures() {
 		menuBarTextureSize(i, rect2.x+rect2.w);
 	}
 
+	// info text
 	SDL_Surface *nofilemsg = TTF_RenderUTF8_Blended(FONT_INTERFACE, getCaption(NTABS).c_str(), COLOR.TEXT);
 	rect1.w = nofilemsg->w;
 	rect1.h = nofilemsg->h;
+	// button text
 	SDL_Surface *nofilebtn = TTF_RenderUTF8_Blended(FONT_INTERFACE, getCaption(NTABS+1).c_str(), COLOR.TEXT);
 	rect2.w = nofilebtn->w;
 	rect2.h = nofilebtn->h;
+	// group them together
 	rect1.x = maxi(rect2.w-rect1.w, 0)/2;
 	rect1.y = 0;
 	rect2.x = maxi(rect1.w-rect2.w, 0)/2;
@@ -170,7 +176,7 @@ void GUI_OpenWindow() {
 	else
 	{
 		WIDTH = displayMode.w/2;
-		HEIGHT = displayMode.h/1.5;
+		HEIGHT = displayMode.h/1.5; // fixed window size, but adapt to your screen
 	}
 	WINDOW = SDL_CreateWindow(
 		"Brut.",
