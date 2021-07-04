@@ -205,14 +205,15 @@ void GUI_HandleEvents()
 				break;
 
 			case SDL_MOUSEMOTION:
-				if (menuBarMouseMotion(event.motion.x, event.motion.y)) {
-					//break;
-				}
-				if (fileTabsMouseMotion(event.motion.x, event.motion.y)) {
-					//break;
-				}
-				documentViewMouseMotion(event.motion.x, event.motion.y);
-				break;
+				if (menuBarMouseMotion(event.motion.x, event.motion.y)) {break;}
+				if (fileTabsMouseMotion(event.motion.x, event.motion.y)) {break;}
+				documentViewMouseMotion(event.motion.x, event.motion.y); break;
+
+			case SDL_MOUSEBUTTONDOWN:
+				documentViewMouseDown(event.button.button, event.button.x, event.button.y);	break;
+
+			case SDL_MOUSEBUTTONUP:
+				documentViewMouseUp(event.button.button, event.button.x, event.button.y);	break;
 		}
 	}
 }
@@ -262,8 +263,8 @@ void drawDocumentView() {
 		SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
 		SDL_RenderFillRect(RENDERER, documentViewGetRect(0));
 	} else {
-		SDL_SetRenderDrawColor(RENDERER, noFileBtnRed.get(), noFileBtnGreen.get(), noFileBtnBlue.get(), 255);
-		SDL_RenderFillRect(RENDERER, noFileGetBtnRect());
+		SDL_SetRenderDrawColor(RENDERER, noFileBtn.getColorRed(), noFileBtn.getColorGreen(), noFileBtn.getColorBlue(), 255);
+		SDL_RenderFillRect(RENDERER, noFileBtn.getRect());
 		SDL_RenderCopy(RENDERER, TEXTURE_NOFILE, NULL, noFileGetRect());
 	}
 }
