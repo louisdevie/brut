@@ -3,7 +3,6 @@
 #include </usr/include/SDL2/SDL_image.h>
 
 #include "menubar.cpp"
-#include "filetabs.cpp"
 #include "docview.cpp"
 #include "bottombar.cpp"
 #include "utils.cpp"
@@ -187,7 +186,6 @@ void GUI_OpenWindow() {
 	RENDERER = SDL_CreateRenderer(WINDOW, -1, 0);
 
 	menuBarInit();
-	fileTabsInit();
 	documentViewInit();
 	bottomBarInit();
 }
@@ -211,7 +209,6 @@ void GUI_HandleEvents()
 
 			case SDL_MOUSEMOTION:
 				if (menuBarMouseMotion(event.motion.x, event.motion.y)) {break;}
-				if (fileTabsMouseMotion(event.motion.x, event.motion.y)) {break;}
 				documentViewMouseMotion(event.motion.x, event.motion.y); break;
 
 			case SDL_MOUSEBUTTONDOWN:
@@ -230,13 +227,11 @@ void GUI_UpdateWindow()
 
 	slideView();
 
-	menuBarUpdate(WIDTH, HEIGHT);
-	fileTabsUpdate(WIDTH, HEIGHT);
+	menuBarUpdate();
 	documentViewUpdate();
-	bottomBarUpdate(WIDTH, HEIGHT);
+	bottomBarUpdate();
 
 	drawMenuBar();
-	drawFileTabs();
 	drawDocumentView();
 	drawBottomBar();
 
@@ -258,21 +253,27 @@ void drawMenuBar() {
 	}
 }
 
-void drawFileTabs() {
-	for (int i=0; i<openFilesCount; i++) {
-		SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
-		//SDL_RenderFillRect(RENDERER, fileTabsGetTabRect(i));
-	}
-}
-
 void drawDocumentView() {
-	if (mode == NOFILE) {
+	switch (mode) {
+	case NOFILE:
 		SDL_SetRenderDrawColor(RENDERER, noFileBtn.getColorRed(), noFileBtn.getColorGreen(), noFileBtn.getColorBlue(), 255);
 		SDL_RenderFillRect(RENDERER, noFileBtn.getRect());
 		SDL_RenderCopy(RENDERER, TEXTURE_NOFILE, NULL, noFileGetRect());
-	} else if (mode == DOCUMENT) {
+		break;
+
+	case DOCUMENT:
 		SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
 		SDL_RenderFillRect(RENDERER, documentViewGetRect());
+		break;
+	}
+	if (mode != prevMode) {
+		switch (prevMode) {
+		case NOFILE:
+			SDL_SetRenderDrawColor(RENDERER, noFileBtn.getColorRed(), noFileBtn.getColorGreen(), noFileBtn.getColorBlue(), 255);
+			SDL_RenderFillRect(RENDERER, noFileBtn.getRect());
+			SDL_RenderCopy(RENDERER, TEXTURE_NOFILE, NULL, noFileGetRect());
+			break;
+		}
 	}
 }
 

@@ -42,27 +42,26 @@ bool menuBarMouseMotion(int mouseX, int mouseY) {
 	return false;
 }
 
-//TODO: remove parameters and use directly WDTH and HEIGHT instead
-void menuBarUpdate(int W, int H) {
+void menuBarUpdate() {
 	if (menuBarFocus != prevMenuBarFocus) {
 		if (menuBarFocus == -1) {
 			for (int i=0; i<NTABS; i++) {
-				menuBarButtonX[i].goTo(10+((W-20)/NTABS)*i);
-				menuBarButtonW[i].goTo((W-20)/NTABS);
+				menuBarButtonX[i].goTo(10+((WIDTH-20)/NTABS)*i);
+				menuBarButtonW[i].goTo((WIDTH-20)/NTABS);
 				menuBarTexW[i].goTo(32);
 			}
 		} else {
 			for (int i=0; i<NTABS; i++) {
 				if (i == menuBarFocus) {
 					menuBarButtonX[i].goTo(10+80*i);
-					menuBarButtonW[i].goTo(W+60-(80*NTABS));
+					menuBarButtonW[i].goTo(WIDTH+60-(80*NTABS));
 					menuBarTexW[i].goTo(menuBarTexSize[i]);
 				} else {
 					if (i < menuBarFocus) {
 						menuBarButtonX[i].goTo(10+80*i);
 						menuBarButtonW[i].goTo(80);
 					} else {
-						menuBarButtonX[i].goTo(W-10-(80*(NTABS-i)));
+						menuBarButtonX[i].goTo(WIDTH-10-(80*(NTABS-i)));
 						menuBarButtonW[i].goTo(80);
 					}
 					menuBarTexW[i].goTo(32);

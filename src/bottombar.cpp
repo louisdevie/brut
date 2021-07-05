@@ -9,18 +9,13 @@
 SDL_Rect bottomBarRect;
 
 void bottomBarInit() {
-	bottomBarRect.x = 10;
-	bottomBarRect.y = 95;
 }
 
-//TODO: remove parameters and use directly WDTH and HEIGHT instead
 void bottomBarMouseMotion(int mouseX, int mouseY) {
 	
 }
 
-void bottomBarUpdate(int W, int H) {
-	bottomBarRect.w = W-20;
-	bottomBarRect.h = H-140;
+void bottomBarUpdate() {
 }
 
 SDL_Rect *bottomBarGetRect(int i) {

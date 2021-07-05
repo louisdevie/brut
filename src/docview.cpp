@@ -4,6 +4,7 @@
 /*	Main view
 */
 
+std::vector<SDL_Rect> documentTabRect;
 SDL_Rect documentViewRect;
 
 int startupcounter;
@@ -65,6 +66,19 @@ void documentViewUpdate() {
 			noFileRect.y + noFileRect.h + 10 - noFileBtn.getNormalRect()->h  );
 		noFileBtn.update();
 		break;
+	}
+
+	if (mode != prevMode) {
+		switch (prevMode) {
+		case NOFILE:
+			noFileRect.x = documentViewRect.x - 10 - documentViewRect.w/2 - noFileRect.w/2;
+			noFileRect.y = documentViewRect.y + documentViewRect.h/2 - noFileRect.h/2;
+			noFileBtn.place(
+				noFileRect.x + noFileRect.w/2 - noFileBtn.getNormalRect()->w/2,
+				noFileRect.y + noFileRect.h + 10 - noFileBtn.getNormalRect()->h  );
+			noFileBtn.update();
+			break;
+		}
 	}
 
 	documentViewRect.x = getViewX()+10;

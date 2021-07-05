@@ -9,7 +9,7 @@
    id="svg5"
    inkscape:version="1.1 (c68e22c387, 2021-05-23)"
    sodipodi:docname="doc.svg"
-   inkscape:export-filename="/home/louisdevie/brut/brut-code/res/missing.png"
+   inkscape:export-filename="/home/louisdevie/brut/brut-code/res/info.png"
    inkscape:export-xdpi="22.577778"
    inkscape:export-ydpi="22.577778"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -26,9 +26,9 @@
      inkscape:pagecheckerboard="true"
      inkscape:document-units="cm"
      showgrid="true"
-     inkscape:zoom="2.8564201"
-     inkscape:cx="684.2481"
-     inkscape:cy="84.896477"
+     inkscape:zoom="2.019794"
+     inkscape:cx="176.99825"
+     inkscape:cy="339.88614"
      inkscape:window-width="1366"
      inkscape:window-height="704"
      inkscape:window-x="0"
@@ -555,6 +555,22 @@
        height="12"
        x="27.999998"
        y="91.999992"
+       rx="4.6176669e-07" />
+    <path
+       id="path923"
+       style="fill-opacity:0.998677;stroke-width:0.2"
+       inkscape:transform-center-x="-0.38196503"
+       inkscape:transform-center-y="-1.4004508e-06"
+       transform="scale(0.26458333)"
+       d="m 260.7874,377.95276 v 22.67717 h -15.11811 l -22.67716,-22.67717 v -52.91339 l -15.11811,-15.11811 h 37.79527 l 0,60.47245 7.55905,7.55905 z"
+       sodipodi:nodetypes="cccccccccc" />
+    <rect
+       style="fill:#000000;fill-opacity:0.998677;stroke-width:0.0529167"
+       id="rect966"
+       width="6"
+       height="6"
+       x="59"
+       y="74"
        rx="4.6176669e-07" />
   </g>
 </svg>
