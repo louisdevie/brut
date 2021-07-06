@@ -123,6 +123,7 @@ struct palette
 	SDL_Color FG;
 	SDL_Color HOVER;
 	SDL_Color TEXT;
+	SDL_Color TAB;
 };
 
 palette COLOR = {
@@ -130,6 +131,7 @@ palette COLOR = {
 	{255, 255, 255, 255},
 	{128, 192, 255, 255},
 	{  0,   0,   0, 255},
+	{160, 160, 160, 255},
 };
 
 

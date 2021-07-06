@@ -26,9 +26,9 @@
      inkscape:pagecheckerboard="true"
      inkscape:document-units="cm"
      showgrid="true"
-     inkscape:zoom="2.019794"
-     inkscape:cx="176.99825"
-     inkscape:cy="339.88614"
+     inkscape:zoom="2.8564201"
+     inkscape:cx="91.898248"
+     inkscape:cy="438.13584"
      inkscape:window-width="1366"
      inkscape:window-height="704"
      inkscape:window-x="0"
@@ -572,5 +572,10 @@
        x="59"
        y="74"
        rx="4.6176669e-07" />
+    <path
+       id="path1065"
+       style="fill-opacity:0.998677"
+       d="m 32,125 h -7 l 0,7 h -5 l 0,-7 h -7 v -5 h 7 l 0,-7 h 5 l 0,7 h 7 z"
+       sodipodi:nodetypes="ccccccccccccc" />
   </g>
 </svg>
