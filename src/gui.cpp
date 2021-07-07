@@ -8,8 +8,6 @@
 #include "utils.cpp"
 #include "filemanager.cpp"
 
-#include <vector>
-
 /*	SDL stuff, and brings everything together
 */
 
@@ -32,8 +30,7 @@ void drawFileTabs();
 
 SDL_Texture *TEXTURE_NOFILE;
 SDL_Texture *TEXTURE_TABICON[3];
-std::vector<*SDL_Texture> TEXTURE_DOCNAME;
-int docnameTexturesCount;
+SDL_Texture *TEXTURE_DOCNAME[MAXDOCS];
 void drawDocumentView();
 
 void drawBottomBar();
@@ -96,6 +93,7 @@ void GUI_LoadResources() {
 			SDL_BlitSurface(ICON_MISSING, NULL, ICON_MENUBAR[i], NULL); // use default icon instead
 		}
 	}
+	SDL_Rect defaultrect = {-3, -3, 32, 32};
 	std::string smallIcons[3] = {"small-plus", "small-cross", "small-dot"};
 	for (int i=0; i<3; i++) {
 		ICON_TAB[i] = IMG_Load(getResourcePath(RES_ICON, smallIcons[i]).c_str());
@@ -103,7 +101,7 @@ void GUI_LoadResources() {
 		{
 			logError("error loading icon: %s", 1);
 			ICON_TAB[i] = SDL_CreateRGBSurface(0, 25, 25, 32, rmask, gmask, bmask, amask);
-			SDL_BlitSurface(ICON_MISSING, NULL, ICON_TAB[i], NULL); // use default icon instead
+			SDL_BlitSurface(ICON_MISSING, NULL, ICON_TAB[i], &defaultrect); // use default icon instead
 		}
 	}
 
@@ -186,8 +184,10 @@ void GUI_DestroyTextures() {
 		SDL_DestroyTexture(TEXTURE_TABICON[i]);
 	}
 
-	for (int i=0; i<TEXTURE_DOCNAME.size(); i++) {
-		SDL_DestroyTexture(TEXTURE_DOCNAME[i]);
+	for (int i=0; i<MAXDOCS; i++) {
+		if (TEXTURE_DOCNAME[i]) {
+			SDL_DestroyTexture(TEXTURE_DOCNAME[i]);
+		}
 	}
 }
 
@@ -217,7 +217,6 @@ void GUI_OpenWindow() {
 	menuBarInit();
 	documentViewInit();
 	bottomBarInit();
-	docnameTexturesCount = 0;
 }
 
 void GUI_CloseWindow() {
@@ -256,13 +255,6 @@ void GUI_UpdateWindow()
 	SDL_RenderClear(RENDERER);
 
 	slideView();
-	if (docnameTexturesCount < openFilesCount) {
-		SDL_Surface *name = TTF_RenderUTF8_Blended(FONT_INTERFACE, openFiles[selectedDocument+1].name.c_str(), COLOR.TEXT);
-		newDocnameTextureSize(name->w, name->h);
-		TEXTURE_DOCNAME.push_back(SDL_CreateTextureFromSurface(RENDERER, name));
-		SDL_FreeSurface(name);
-		docnameTexturesCount = TEXTURE_DOCNAME.size();
-	}
 
 	menuBarUpdate();
 	documentViewUpdate();
@@ -302,13 +294,15 @@ void drawDocumentView() {
 		SDL_SetRenderDrawColor(RENDERER, COLOR.TAB.r, COLOR.TAB.g, COLOR.TAB.b, 255);
 		SDL_RenderFillRect(RENDERER, newDocumentGetRect());
 		SDL_RenderCopy(RENDERER, TEXTURE_TABICON[0], NULL, newDocumentGetRect());
-		for (int i=0; i<documentTabsCount; i++) {
+		for (int i=0; i<openFilesCount; i++) {
 			if (i == selectedDocument) {
 				SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
 			} else {
 				SDL_SetRenderDrawColor(RENDERER, COLOR.TAB.r, COLOR.TAB.g, COLOR.TAB.b, 255);
 			}
 			SDL_RenderFillRect(RENDERER, getTabRect(i));
+			SDL_RenderCopy(RENDERER, TEXTURE_DOCNAME[i], getTabSrcRect(i), getTabDstRect(i));
+			SDL_RenderCopy(RENDERER, TEXTURE_TABICON[1], NULL, getTabIconRect(i));
 		}
 		SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
 		SDL_RenderFillRect(RENDERER, documentViewGetRect());
@@ -323,6 +317,13 @@ void drawDocumentView() {
 			break;
 		}
 	}
+}
+
+void updateDocnameTexture(int i) {
+	SDL_Surface *name = TTF_RenderUTF8_Blended(FONT_INTERFACE, openFiles[i].name.c_str(), COLOR.TEXT);
+	docnameTextureSize(i, name->w, name->h);
+	TEXTURE_DOCNAME[i] = SDL_CreateTextureFromSurface(RENDERER, name);
+	SDL_FreeSurface(name);
 }
 
 void drawBottomBar() {

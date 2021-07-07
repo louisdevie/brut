@@ -16,8 +16,6 @@ int main(int argc, char** args)
 	GUI_LoadResources();
 	GUI_GenerateTextures();
 
-	updateOpenFilesCount();
-
 	while (!GUI_QUIT) // main loop
 	{
 		GUI_HandleEvents();
@@ -36,7 +34,7 @@ int main(int argc, char** args)
 
 
 void createNewFile() {
-	openFiles.push_back({getCaption(NTABS+2), ""}); // no path means it's not saved anywhere yet
-	updateOpenFilesCount();
+	selectedDocument = appendFile({getCaption(NTABS+2), ""}); // no path means it's not saved anywhere yet
+	updateDocnameTexture(selectedDocument);
 	setMode(DOCUMENT); // switch to DOCUMENT mode if we're in another view
 }

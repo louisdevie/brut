@@ -2,16 +2,15 @@
 #include "button.cpp"
 #include "filemanager.cpp"
 
-#include <vector>
-
 /*	Main view
 */
 
-std::vector<SDL_Rect> documentTabRect;
-std::vector<SDL_Rect> documentTabSrcRect;
-std::vector<SDL_Rect> documentTabDstRect;
-std::vector<SDL_Rect> documentTabIconRect; // fuck this there will be a max of opened docs at the same time
-int documentTabsCount;
+SDL_Rect documentTabRect[MAXDOCS];
+SDL_Rect documentTabSrcRect[MAXDOCS];
+int documentTabTexW[MAXDOCS];
+SDL_Rect documentTabDstRect[MAXDOCS];
+SDL_Rect documentTabIconRect[MAXDOCS];
+int documentTabPadding;
 int selectedDocument;
 SDL_Rect newDocumentRect;
 SDL_Rect documentViewRect;
@@ -27,6 +26,14 @@ void documentViewInit() {
 	newDocumentRect.y = 70;
 	newDocumentRect.h = 25;
 	newDocumentRect.w = 25;
+	for (int i=0; i<MAXDOCS; i++) {
+		documentTabRect[i].y = 70;
+		documentTabRect[i].h = 25;
+		documentTabIconRect[i].x = -25;
+		documentTabIconRect[i].y = 70;
+		documentTabIconRect[i].w = 25;
+		documentTabIconRect[i].h = 25;
+	}
 	mode = STARTUP;
 	prevMode = STARTUP;
 	startupcounter = 10;
@@ -34,7 +41,6 @@ void documentViewInit() {
 	noFileBtn.init();
 	noFileBtn.bindTo(createNewFile);
 
-	documentTabsCount = 0;
 	selectedDocument = -1;
 }
 
@@ -89,16 +95,15 @@ void documentViewUpdate() {
 		break;
 
 	case DOCUMENT:
-		if (documentTabsCount < openFilesCount) {
-			documentTabRect.push_back({0, 70, 0, 25});
-			documentTabsCount = documentTabRect.size();
-			selectedDocument = documentTabsCount-1;
-		}
 		int x = getViewX()+10;
-		for (int i=0; i<documentTabsCount; i++) {
+		for (int i=0; i<openFilesCount; i++) {
 			documentTabRect[i].x = x;
 			documentTabRect[i].w = 200;
-			x += documentTabRect[i].w + 4;
+			documentTabSrcRect[i].w = mini(170-documentTabPadding, documentTabTexW[i]);
+			documentTabDstRect[i].x = x+documentTabPadding+5;
+			documentTabDstRect[i].w = documentTabSrcRect[i].w;
+			documentTabIconRect[i].x = x+175;
+			x += 204;
 		}
 		newDocumentRect.x = x;
 	}
@@ -129,11 +134,16 @@ SDL_Rect *newDocumentGetRect() {
 	return &newDocumentRect;
 }
 
-void newDocnameTextureSize(int w, int h) {
-	documentNameW.push_back(w);
-	documentSrcRect.push_back({0, 0, 0, h});
-	int padding = 12-h/2;
-	documentDstRect.push_back({padding, padding, 0, h});
+void docnameTextureSize(int i, int w, int h) {
+	documentTabTexW[i] = w;
+	if (documentTabSrcRect[0].h == 0) {
+		documentTabPadding = 12-h/2;
+		for (i=0; i<MAXDOCS; i++) {
+			documentTabSrcRect[i].h = h;
+			documentTabDstRect[i].y = 70+documentTabPadding;
+			documentTabDstRect[i].h = h;
+		}
+	}
 }
 
 SDL_Rect *getTabRect(int i) {

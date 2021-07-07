@@ -1,12 +1,13 @@
 #pragma once
 
 #include "utils.cpp"
-#include <vector>
+
+#define MAXDOCS 10
 
 /*	Manages files.
 */
 
-int openFilesCount;
+int openFilesCount = 0;
 
 struct File
 {
@@ -14,8 +15,10 @@ struct File
 	std::string path;
 };
 
-std::vector<File> openFiles;
+File openFiles[MAXDOCS];
 
-void updateOpenFilesCount() {
-	openFilesCount = openFiles.size();
+int appendFile(File file) {
+	openFiles[openFilesCount] = file;
+	openFilesCount ++;
+	return openFilesCount-1;
 }
