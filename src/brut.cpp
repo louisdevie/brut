@@ -38,3 +38,9 @@ void createNewFile() {
 	updateDocnameTexture(selectedDocument);
 	setMode(DOCUMENT); // switch to DOCUMENT mode if we're in another view
 }
+
+
+void closeFile() {
+	selectedDocument = removeFile(selectedDocument);
+	setMode(NOFILE);
+}

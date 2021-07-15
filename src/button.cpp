@@ -5,6 +5,8 @@
 /*	button class (just a colored rect, the text is separated)
 */
 
+void noAction() {}
+
 class Button
 {
 public:
@@ -41,6 +43,7 @@ void Button::init() {
 	this->wasDown = true;
 	// here hadFocus and wasDown are set to true so the color will be
 	// initialised on the first `update` call
+	this->callback = noAction;
 }
 
 void Button::place(int x, int y) {

@@ -213,6 +213,8 @@ void GUI_OpenWindow() {
 		SDL_WINDOW_SHOWN
 	);
 	RENDERER = SDL_CreateRenderer(WINDOW, -1, 0);
+	SDL_SetRenderDrawColor(RENDERER, COLOR.BG.r, COLOR.BG.g, COLOR.BG.b, 255);
+	SDL_RenderClear(RENDERER);
 
 	menuBarInit();
 	documentViewInit();
@@ -297,12 +299,17 @@ void drawDocumentView() {
 		for (int i=0; i<openFilesCount; i++) {
 			if (i == selectedDocument) {
 				SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
+				SDL_RenderFillRect(RENDERER, getTabRect(i));
+				SDL_RenderCopy(RENDERER, TEXTURE_DOCNAME[i], getTabSrcRect(i), getTabDstRect(i));		
+				SDL_SetRenderDrawColor(RENDERER, closeTabBtn.getColorRed(), closeTabBtn.getColorGreen(), closeTabBtn.getColorBlue(), 255);
+				SDL_RenderFillRect(RENDERER, closeTabBtn.getRect());
+				SDL_RenderCopy(RENDERER, TEXTURE_TABICON[1], NULL, getTabIconRect(i));
 			} else {
 				SDL_SetRenderDrawColor(RENDERER, COLOR.TAB.r, COLOR.TAB.g, COLOR.TAB.b, 255);
+				SDL_RenderFillRect(RENDERER, getTabRect(i));
+				SDL_RenderCopy(RENDERER, TEXTURE_DOCNAME[i], getTabSrcRect(i), getTabDstRect(i));
+				SDL_RenderCopy(RENDERER, TEXTURE_TABICON[1], NULL, getTabIconRect(i));
 			}
-			SDL_RenderFillRect(RENDERER, getTabRect(i));
-			SDL_RenderCopy(RENDERER, TEXTURE_DOCNAME[i], getTabSrcRect(i), getTabDstRect(i));
-			SDL_RenderCopy(RENDERER, TEXTURE_TABICON[1], NULL, getTabIconRect(i));
 		}
 		SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
 		SDL_RenderFillRect(RENDERER, documentViewGetRect());
@@ -311,9 +318,23 @@ void drawDocumentView() {
 	if (mode != prevMode) {
 		switch (prevMode) {
 		case NOFILE:
-			SDL_SetRenderDrawColor(RENDERER, noFileBtn.getColorRed(), noFileBtn.getColorGreen(), noFileBtn.getColorBlue(), 255);
+			SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
 			SDL_RenderFillRect(RENDERER, noFileBtn.getRect());
 			SDL_RenderCopy(RENDERER, TEXTURE_NOFILE, NULL, noFileGetRect());
+			break;
+
+		case DOCUMENT:
+			SDL_SetRenderDrawColor(RENDERER, COLOR.TAB.r, COLOR.TAB.g, COLOR.TAB.b, 255);
+			SDL_RenderFillRect(RENDERER, newDocumentGetRect());
+			SDL_RenderCopy(RENDERER, TEXTURE_TABICON[0], NULL, newDocumentGetRect());
+			for (int i=0; i<openFilesCount; i++) {
+				SDL_SetRenderDrawColor(RENDERER, COLOR.TAB.r, COLOR.TAB.g, COLOR.TAB.b, 255);
+				SDL_RenderFillRect(RENDERER, getTabRect(i));
+				SDL_RenderCopy(RENDERER, TEXTURE_DOCNAME[i], getTabSrcRect(i), getTabDstRect(i));
+				SDL_RenderCopy(RENDERER, TEXTURE_TABICON[1], NULL, getTabIconRect(i));
+			}
+			SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
+			SDL_RenderFillRect(RENDERER, documentViewGetRect());
 			break;
 		}
 	}

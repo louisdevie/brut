@@ -22,3 +22,17 @@ int appendFile(File file) {
 	openFilesCount ++;
 	return openFilesCount-1;
 }
+
+int removeFile(int file) {
+	openFilesCount --;
+	for (int i=file; i<openFilesCount; i++) {
+		openFiles[i] = openFiles[i+1];
+	};
+	openFiles[openFilesCount] = {"", ""};
+
+	if (file==0 && openFilesCount>1) {
+		return file;
+	} else {
+		return file-1;
+	}
+}

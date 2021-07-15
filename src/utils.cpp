@@ -175,6 +175,7 @@ private:
 };
 
 void createNewFile();
+void closeFile();
 
 int mode;
 int prevMode;
