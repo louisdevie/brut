@@ -8,7 +8,7 @@
 #include "utils.cpp"
 #include "filemanager.cpp"
 
-/*	SDL stuff, and brings everything together
+/*	SDL stuff
 */
 
 SDL_Window *WINDOW = NULL;
@@ -197,20 +197,20 @@ void GUI_OpenWindow() {
 	SDL_DisplayMode displayMode;
 	if(SDL_GetDesktopDisplayMode(0, &displayMode) < 0)
 	{
-		fprintf(stderr, "SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
+		logError("GUI: failed to get display mode: %s", 1);
 		WIDTH = 500;
 		HEIGHT = 500;
 	}
 	else
 	{
 		WIDTH = displayMode.w/2;
-		HEIGHT = displayMode.h/1.5; // fixed window size, but adapt to your screen
+		HEIGHT = displayMode.h/1.5; // adapt to the screen
 	}
 	WINDOW = SDL_CreateWindow(
 		"Brut.",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		WIDTH, HEIGHT,
-		SDL_WINDOW_SHOWN
+		SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE
 	);
 	RENDERER = SDL_CreateRenderer(WINDOW, -1, 0);
 	SDL_SetRenderDrawColor(RENDERER, COLOR.BG.r, COLOR.BG.g, COLOR.BG.b, 255);
@@ -234,19 +234,27 @@ void GUI_HandleEvents()
 	{
 		switch (event.type)
 		{
-			case SDL_QUIT:
-				GUI_QUIT = true;
-				break;
+		case SDL_QUIT:
+			GUI_QUIT = true;
+			break;
 
-			case SDL_MOUSEMOTION:
-				if (menuBarMouseMotion(event.motion.x, event.motion.y)) {break;}
-				documentViewMouseMotion(event.motion.x, event.motion.y); break;
+		case SDL_WINDOWEVENT:
+			switch (event.window.event)
+			{
+			case SDL_WINDOWEVENT_RESIZED:
+				WIDTH = event.window.data1;
+				HEIGHT = event.window.data2;
+			}
 
-			case SDL_MOUSEBUTTONDOWN:
-				documentViewMouseDown(event.button.button, event.button.x, event.button.y);	break;
+		case SDL_MOUSEMOTION:
+			if (menuBarMouseMotion(event.motion.x, event.motion.y)) {break;}
+			documentViewMouseMotion(event.motion.x, event.motion.y); break;
 
-			case SDL_MOUSEBUTTONUP:
-				documentViewMouseUp(event.button.button, event.button.x, event.button.y);	break;
+		case SDL_MOUSEBUTTONDOWN:
+			documentViewMouseDown(event.button.button, event.button.x, event.button.y);	break;
+
+		case SDL_MOUSEBUTTONUP:
+			documentViewMouseUp(event.button.button, event.button.x, event.button.y);	break;
 		}
 	}
 }

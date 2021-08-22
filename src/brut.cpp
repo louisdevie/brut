@@ -1,11 +1,14 @@
 #include "gui.cpp"
 #include "filemanager.cpp"
+#include "utils.cpp"
 
 /*	entry point of the app
 */
 
 int main(int argc, char** args)
 {
+	setup(argc, args);
+
 	if(GUI_Init())
 	{
 		return 1; // exit if initialisation fail

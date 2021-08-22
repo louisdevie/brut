@@ -2,7 +2,7 @@
 #include "button.cpp"
 #include "filemanager.cpp"
 
-/*	Main view (thge file need to be renamed)
+/*	Main view (the file need to be renamed)
 */
 
 SDL_Rect mainViewRect;

@@ -2,7 +2,7 @@
 
 #include "utils.cpp"
 
-/*	button class (just a colored rect, the text is separated)
+/*	button class (just a colored rect, the text/icon is handled separately)
 */
 
 void noAction() {}

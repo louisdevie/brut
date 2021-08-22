@@ -5,16 +5,40 @@
 #include <fstream>
 #include <iostream>
 
-/*	everything here is common for all other scripts
+/*	this is included everywhere
 */
 
 // window size
 int WIDTH, HEIGHT;
 
 // resource type
-int RES_ICON = 0;
-int RES_FONT = 1;
-int RES_LANG = 2;
+const int RES_ICON = 0;
+const int RES_FONT = 1;
+const int RES_LANG = 2;
+
+int LOGLVL;
+const int QUIET = 0;
+const int ERROR = 1;
+const int INFO = 2;
+const int DEBUG = 3;
+
+void setup(int argc, char** args) {
+	LOGLVL = ERROR;
+
+	int i = 0;
+	while (i < argc) {
+		if (args[i] == "-Q" || args[i] == "--quiet") {
+			LOGLVL = QUIET;
+		} else if (args[i] == "-E" || args[i] == "--logerrors") {
+			LOGLVL = ERROR;
+		} else if (args[i] == "-I" || args[i] == "--loginfos") {
+			LOGLVL = INFO;
+		} else if (args[i] == "-D" || args[i] == "--debug") {
+			LOGLVL = DEBUG;
+		}
+		i++;
+	}
+}
 
 bool isBoundedToCoords(int x, int y, int x1, int y1, int x2, int y2) {
 	if (x < x1) {
@@ -78,15 +102,19 @@ std::string ERR = "\x1b[1;31m[ERROR] \x1b[0m";
 std::string INF = "\x1b[1;34m[INFO ] \x1b[0m";
 
 void logError(std::string errmsg, bool sdlerr) {
-	if (sdlerr) {
-		printf((ERR + errmsg + "\n").c_str(), SDL_GetError());
-	} else {
-		printf((ERR + errmsg + "\n").c_str());
+	if (LOGLVL >= ERROR) {
+		if (sdlerr) {
+			printf((ERR + errmsg + "\n").c_str(), SDL_GetError());
+		} else {
+			printf((ERR + errmsg + "\n").c_str());
+		}
 	}
 }
 
 void logInfo(std::string errmsg) {
-	printf((INF + errmsg + "\n").c_str());
+	if (LOGLVL >= INFO) {
+		printf((INF + errmsg + "\n").c_str());
+	}
 }
 
 #define DICTSIZE 20
