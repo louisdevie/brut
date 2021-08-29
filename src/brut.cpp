@@ -7,7 +7,9 @@
 
 int main(int argc, char** args)
 {
-	setup(argc, args);
+	if (setup(argc, args)) {
+		return 0;
+	}
 
 	if(GUI_Init())
 	{

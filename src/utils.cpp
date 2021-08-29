@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "languages.hpp"
+
 /*	this is included everywhere
 */
 
@@ -22,22 +24,49 @@ const int ERROR = 1;
 const int INFO = 2;
 const int DEBUG = 3;
 
-void setup(int argc, char** args) {
+int setup(int argc, char** args) {
 	LOGLVL = ERROR;
+	bool showHelp = false;
+	bool showVersionInfo = false;
 
-	int i = 0;
+	int i = 1;
 	while (i < argc) {
-		if (args[i] == "-Q" || args[i] == "--quiet") {
+		if ((strcmp(args[i], "-Q") * strcmp(args[i], "--quiet")) == 0) {
 			LOGLVL = QUIET;
-		} else if (args[i] == "-E" || args[i] == "--logerrors") {
+		} else if ((strcmp(args[i], "-E") * strcmp(args[i], "--logerrors")) == 0) {
 			LOGLVL = ERROR;
-		} else if (args[i] == "-I" || args[i] == "--loginfos") {
+		} else if ((strcmp(args[i], "-I") * strcmp(args[i], "--loginfos")) == 0) {
 			LOGLVL = INFO;
-		} else if (args[i] == "-D" || args[i] == "--debug") {
+		} else if ((strcmp(args[i], "-D") * strcmp(args[i], "--debug")) == 0) {
 			LOGLVL = DEBUG;
+		} else if ((strcmp(args[i], "-h") * strcmp(args[i], "--help")) == 0) {
+			showHelp = true;
+		} else if ((strcmp(args[i], "-v") * strcmp(args[i], "--version")) == 0) {
+			showVersionInfo = true;
 		}
 		i++;
 	}
+
+	if (showHelp) {
+		printf("\n⣿⣿⣿⣿⣷⣄                 ⣿⣿");
+		printf("\n⣿⣿ ⢈⣿⣿               ⣿⣿⣿⣿⣿⣿");
+		printf("\n⣿⣿⣿⣿⣿⣏ ⣿⣿⣿⣿⣷⣄ ⣿⣿  ⣿⣿   ⣿⣿");
+		printf("\n⣿⣿ ⢈⣿⣿ ⣿⣿⠁⠈⣿⣿ ⣿⣿⡀⢀⣿⣿   ⣿⣿⡀");
+		printf("\n⣿⣿⣿⣿⡿⠋ ⣿⣿     ⠙⢿⣿⣿⣿⣿   ⠙⢿⣿⣿  V 1.0.0-DEV290821A\n");
+		printf("\n~~~ Help on command line options ~~~\n");
+		printf("\n-v, --version    display the version");
+		printf("\n-h, --help       display this message\n");
+		printf("\n-Q, --quiet      disable logs");
+		printf("\n-E, --logerrors  log only errors");
+		printf("\n-I, --loginfos   log information messages and errors");
+		printf("\n-D, --debug      log everything\n");
+		return 1;
+	} else if (showVersionInfo) {
+		printf("Brut (io.sourceforge.brut) version 1.0.0-dev290821A\n");
+		return 1;
+	}
+
+	return 0;
 }
 
 bool isBoundedToCoords(int x, int y, int x1, int y1, int x2, int y2) {
@@ -100,6 +129,7 @@ Uint32 amask = 0xff000000;
 
 std::string ERR = "\x1b[1;31m[ERROR] \x1b[0m";
 std::string INF = "\x1b[1;34m[INFO ] \x1b[0m";
+std::string DBG = "\x1b[1;36m[DEBUG] \x1b[0m";
 
 void logError(std::string errmsg, bool sdlerr) {
 	if (LOGLVL >= ERROR) {
@@ -111,9 +141,15 @@ void logError(std::string errmsg, bool sdlerr) {
 	}
 }
 
-void logInfo(std::string errmsg) {
+void logInfo(std::string msg) {
 	if (LOGLVL >= INFO) {
-		printf((INF + errmsg + "\n").c_str());
+		printf((INF + msg + "\n").c_str());
+	}
+}
+
+void debugMsg(std::string msg) {
+	if (LOGLVL >= DEBUG) {
+		printf((DBG + msg + "\n").c_str());
 	}
 }
 
@@ -133,15 +169,6 @@ void loadLang(){
 	if (langfile.is_open()) {
 		while (getline(langfile, _LANG[i]) && (i+1)<DICTSIZE) {i++;}
 		langfile.close();
-	}
-}
-
-std::string getCaption(int i) {
-	if (i >= DICTSIZE) {
-		return "<LANG_" + std::to_string(i) + ">";
-	} else {
-		std::string a = _LANG[i];
-		return _LANG[i];
 	}
 }
 
