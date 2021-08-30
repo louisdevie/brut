@@ -21,6 +21,7 @@ std::vector<_LANG_DSTR> _LANG_RULES_DATE;
 std::vector<_LANG_DSTR> _LANG_RULES_TIME;
 std::vector<_LANG_DSTR> _LANG_RULES_SPAN;
 std::vector<_LANG_DSTR> _LANG_APP_TEXT;
+int _LANG_DICT_SIZE;
 
 const int LANGERR_UNKNOWN = 1;
 const int LANGERR_FAILEDTOOPEN = 2;
@@ -50,6 +51,8 @@ int loadLanguage(std::string path) {
 	if (i<7) {
 		return LANGERR_MISSINGFIELD;
 	}
+
+	_LANG_DICT_SIZE = _LANG_APP_TEXT.size();
 	
 	langFile.close();
 	
@@ -57,5 +60,9 @@ int loadLanguage(std::string path) {
 }
 
 std::string getCaption (int index) {
-	return _LANG_APP_TEXT[index].STR;
+	if (index >= 0 && index < _LANG_DICT_SIZE) {
+		return _LANG_APP_TEXT[index].STR;
+	} else {
+		return "<apptext-" + std::to_string(index) + ">";
+	}
 }

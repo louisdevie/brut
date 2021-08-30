@@ -19,6 +19,20 @@ int main(int argc, char** args)
 	// setup
 	GUI_OpenWindow();
 	GUI_LoadResources();
+	std::string path = getResourcePath(RES_LANG, "en");
+	int status = loadLanguage(path);
+	if (status) {
+		switch (status) {
+		case LANGERR_UNKNOWN:
+			logError("LANGUAGES : Unknown error happened while trying to load "+path, 0);
+			break;
+		case LANGERR_FAILEDTOOPEN:
+			logError("LANGUAGES : Couldn't open "+path, 0);
+		case LANGERR_MISSINGFIELD:
+			logError("LANGUAGES : Misssing header field(s) in file "+path, 0);
+		}
+		logInfo("LANGUAGES : Couldn't load default language file. Using a blank language instead.");
+	}
 	GUI_GenerateTextures();
 
 	while (!GUI_QUIT) // main loop
@@ -40,6 +54,7 @@ int main(int argc, char** args)
 
 void createNewFile() {
 	selectedDocument = appendFile({getCaption(NTABS+2), ""}); // no path means it's not saved anywhere yet
+	GUI_ChangeWindowTitle("Brut: "+openFiles[0].name);
 	updateDocnameTexture(selectedDocument);
 	setMode(DOCUMENT); // switch to DOCUMENT mode if we're in another view
 }
@@ -47,5 +62,6 @@ void createNewFile() {
 
 void closeFile() {
 	selectedDocument = removeFile(selectedDocument);
+	GUI_ChangeWindowTitle("Brut.");
 	setMode(NOFILE);
 }

@@ -101,7 +101,7 @@ std::string getResourcePath(int type, std::string resource) {
 		return "res/fonts/SourceSansPro-" + resource + ".ttf";
 	}
 	if (type == RES_LANG) {
-		return "res/languages/" + resource + ".lang";
+		return "res/locale/" + resource + ".lang";
 	}
 	return "";
 }
@@ -150,25 +150,6 @@ void logInfo(std::string msg) {
 void debugMsg(std::string msg) {
 	if (LOGLVL >= DEBUG) {
 		printf((DBG + msg + "\n").c_str());
-	}
-}
-
-#define DICTSIZE 20
-
-std::string _LANG[DICTSIZE];
-
-void loadLang(){
-	std::fstream langfile;
-	int i=0;
-
-	for (int i=0; i<DICTSIZE; i++) {
-		_LANG[i]="<LANG_" + std::to_string(i) + ">";
-	}
-
-	langfile.open(getResourcePath(RES_LANG, "en"), std::ios::in);
-	if (langfile.is_open()) {
-		while (getline(langfile, _LANG[i]) && (i+1)<DICTSIZE) {i++;}
-		langfile.close();
 	}
 }
 

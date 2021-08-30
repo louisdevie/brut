@@ -37,7 +37,7 @@ void drawBottomBar();
 
 int GUI_Init()
 {
-	logInfo("GUI: initializing ...");
+	debugMsg("GUI: initializing ...");
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		fprintf(stderr, "couldn't initialize SDL2: %s\n", SDL_GetError());
@@ -61,7 +61,7 @@ int GUI_Init()
 
 void GUI_Quit()
 {
-	logInfo("GUI: exitting ...");
+	debugMsg("GUI: exitting ...");
 
 	SDL_Quit();
 	TTF_Quit();
@@ -69,7 +69,7 @@ void GUI_Quit()
 }
 
 void GUI_LoadResources() {
-	logInfo("GUI: loading resources ...");
+	debugMsg("GUI: loading resources ...");
 
 	FONT_INTERFACE = TTF_OpenFont(getResourcePath(RES_FONT, "Regular").c_str(), 18);
 	if (!FONT_INTERFACE)
@@ -104,12 +104,10 @@ void GUI_LoadResources() {
 			SDL_BlitSurface(ICON_MISSING, NULL, ICON_TAB[i], &defaultrect); // use default icon instead
 		}
 	}
-
-	loadLang();
 }
 
 void GUI_UnloadResources() {
-	logInfo("GUI: unloading resources ...");
+	debugMsg("GUI: unloading resources ...");
 
 	TTF_CloseFont(FONT_INTERFACE); 
 
@@ -120,7 +118,7 @@ void GUI_UnloadResources() {
 }
 
 void GUI_GenerateTextures() {
-	logInfo("GUI: generating textures ...");
+	debugMsg("GUI: generating textures ...");
 
 	SDL_Rect rect1 = {0, 0, 32, 32};
 	SDL_Rect rect2 = {42, 0, 32, 32};
@@ -172,7 +170,7 @@ void GUI_GenerateTextures() {
 }
 
 void GUI_DestroyTextures() {
-	logInfo("GUI: destroying textures ...");
+	debugMsg("GUI: destroying textures ...");
 	
 	for (int i=0; i<NTABS; i++) {
 		SDL_DestroyTexture(TEXTURE_MENUBAR[i]);
@@ -192,7 +190,7 @@ void GUI_DestroyTextures() {
 }
 
 void GUI_OpenWindow() {
-	logInfo("GUI: creating window ...");
+	debugMsg("GUI: creating window ...");
 	
 	SDL_DisplayMode displayMode;
 	if(SDL_GetDesktopDisplayMode(0, &displayMode) < 0)
@@ -221,8 +219,12 @@ void GUI_OpenWindow() {
 	bottomBarInit();
 }
 
+void GUI_ChangeWindowTitle(std::string newTitle) {
+	SDL_SetWindowTitle(WINDOW, newTitle.c_str());
+}
+
 void GUI_CloseWindow() {
-	logInfo("GUI: closing window ...");
+	debugMsg("GUI: closing window ...");
 	
 	SDL_DestroyWindow(WINDOW);
 	SDL_DestroyRenderer(RENDERER);
