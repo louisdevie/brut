@@ -1,6 +1,6 @@
 #include "utils.cpp"
 #include "button.cpp"
-#include "filemanager.cpp"
+#include "files.cpp"
 
 /*	Main view (the file need to be renamed)
 */

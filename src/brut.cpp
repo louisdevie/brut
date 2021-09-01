@@ -1,5 +1,6 @@
 #include "gui.cpp"
-#include "filemanager.cpp"
+#include "files.cpp"
+#include "parsers.cpp"
 #include "utils.cpp"
 
 /*	entry point of the app
@@ -53,8 +54,9 @@ int main(int argc, char** args)
 
 
 void createNewFile() {
-	selectedDocument = appendFile({getCaption(NTABS+2), ""}); // no path means it's not saved anywhere yet
-	GUI_ChangeWindowTitle("Brut: "+openFiles[0].name);
+	selectedDocument = appendFile({getCaption(NTABS+2), "", "Test text"}); // no path means it's not saved anywhere yet
+	GUI_ChangeWindowTitle("Brut: "+openFiles[selectedDocument].name);
+	parseText(selectedDocument);
 	updateDocnameTexture(selectedDocument);
 	setMode(DOCUMENT); // switch to DOCUMENT mode if we're in another view
 }

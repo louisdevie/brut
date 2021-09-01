@@ -6,7 +6,7 @@
 #include "docview.cpp"
 #include "bottombar.cpp"
 #include "utils.cpp"
-#include "filemanager.cpp"
+#include "files.cpp"
 
 /*	SDL stuff
 */
