@@ -14,6 +14,7 @@ SDL_Rect documentTabDstRect[MAXDOCS];
 SDL_Rect documentTabIconRect[MAXDOCS];
 int documentTabPadding;
 int selectedDocument;
+bool textChanged;
 SDL_Rect documentRect;
 SDL_Rect newDocumentRect;
 Button closeTabBtn;

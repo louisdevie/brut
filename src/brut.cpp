@@ -1,6 +1,5 @@
 #include "gui.cpp"
 #include "files.cpp"
-#include "parsers.cpp"
 #include "utils.cpp"
 
 /*	entry point of the app
@@ -20,6 +19,7 @@ int main(int argc, char** args)
 	// setup
 	GUI_OpenWindow();
 	GUI_LoadResources();
+	setAppID("io.sourceforge.brut");
 	std::string path = getResourcePath(RES_LANG, "en");
 	int status = loadLanguage(path);
 	if (status) {
@@ -55,8 +55,8 @@ int main(int argc, char** args)
 
 void createNewFile() {
 	selectedDocument = appendFile({getCaption(NTABS+2), "", "Test text"}); // no path means it's not saved anywhere yet
+	textChanged = true;
 	GUI_ChangeWindowTitle("Brut: "+openFiles[selectedDocument].name);
-	parseText(selectedDocument);
 	updateDocnameTexture(selectedDocument);
 	setMode(DOCUMENT); // switch to DOCUMENT mode if we're in another view
 }

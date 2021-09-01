@@ -53,7 +53,7 @@ int setup(int argc, char** args) {
 		printf("\n⣿⣿ ⢈⣿⣿               ⣿⣿⣿⣿⣿⣿");
 		printf("\n⣿⣿⣿⣿⣿⣏ ⣿⣿⣿⣿⣷⣄ ⣿⣿  ⣿⣿   ⣿⣿");
 		printf("\n⣿⣿ ⢈⣿⣿ ⣿⣿⠁⠈⣿⣿ ⣿⣿⡀⢀⣿⣿   ⣿⣿⡀");
-		printf("\n⣿⣿⣿⣿⡿⠋ ⣿⣿     ⠙⢿⣿⣿⣿⣿   ⠙⢿⣿⣿  V 1.0.0-DEV010921A\n");
+		printf("\n⣿⣿⣿⣿⡿⠋ ⣿⣿     ⠙⢿⣿⣿⣿⣿   ⠙⢿⣿⣿  V 1.0.0-DEV210901B\n");
 		printf("\n~~~ Help on command line options ~~~\n");
 		printf("\n-v, --version    display the version");
 		printf("\n-h, --help       display this message\n");
@@ -63,7 +63,7 @@ int setup(int argc, char** args) {
 		printf("\n-D, --debug      log everything\n");
 		return 1;
 	} else if (showVersionInfo) {
-		printf("Brut (io.sourceforge.brut) version 1.0.0-dev010921A\n");
+		printf("Brut (io.sourceforge.brut) version 1.0.0-dev210901B\n");
 		return 1;
 	}
 

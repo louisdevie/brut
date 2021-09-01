@@ -15,6 +15,8 @@ SDL_Window *WINDOW = NULL;
 SDL_Renderer *RENDERER = NULL;
 
 TTF_Font *FONT_INTERFACE = NULL;
+#include "textrenderer.cpp"
+
 SDL_Surface *ICON_MISSING = NULL; //
 SDL_Surface *ICON_MENUBAR[NTABS]; // temp
 SDL_Surface *ICON_TAB[3];
@@ -80,7 +82,7 @@ void GUI_LoadResources() {
 	ICON_MISSING = IMG_Load(getResourcePath(RES_ICON, "missing").c_str());
 	if (!ICON_MISSING)
 	{
-		fprintf(stderr, "error loading fallback icon: %s", SDL_GetError());
+		logError("error loading fallback icon: %s", 1);
 		ICON_MISSING = SDL_CreateRGBSurface(0, 32, 32, 32, rmask, gmask, bmask, amask);
 	}
 	std::string icons[NTABS] = {"open", "clock", "save", "copy", "sliders", "info"};
@@ -167,6 +169,9 @@ void GUI_GenerateTextures() {
 		TEXTURE_TABICON[i] = SDL_CreateTextureFromSurface(RENDERER, ICON_TAB[i]);
 		SDL_FreeSurface(ICON_TAB[i]);
 	}
+
+	RENDERED_TEXT = SDL_CreateRGBSurface(0, 100, 100, 32, rmask, gmask, bmask, amask);
+	greycolor = SDL_MapRGB(RENDERED_TEXT->format, 128, 128, 128);
 }
 
 void GUI_DestroyTextures() {
@@ -186,6 +191,11 @@ void GUI_DestroyTextures() {
 		if (TEXTURE_DOCNAME[i]) {
 			SDL_DestroyTexture(TEXTURE_DOCNAME[i]);
 		}
+	}
+
+	SDL_FreeSurface(RENDERED_TEXT);
+	if (RTEX) {
+		SDL_DestroyTexture(RTEX);
 	}
 }
 
@@ -323,6 +333,16 @@ void drawDocumentView() {
 		}
 		SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
 		SDL_RenderFillRect(RENDERER, documentViewGetRect());
+		if (textChanged) {
+			renderText(0, 0, 0);
+			if (RTEX) {
+				SDL_DestroyTexture(RTEX);
+			}
+			RTEX = SDL_CreateTextureFromSurface(RENDERER, RENDERED_TEXT);
+			textChanged = false;
+		}
+		SDL_Rect rect = {documentRect.x+10, documentRect.y+10, 100, 100};
+		SDL_RenderCopy(RENDERER, RTEX, NULL, &rect);
 		break;
 	}
 	if (mode != prevMode) {
