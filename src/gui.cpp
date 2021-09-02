@@ -4,7 +4,7 @@
 
 #include "menubar.cpp"
 #include "docview.cpp"
-#include "bottombar.cpp"
+#include "nofile.cpp"
 #include "utils.cpp"
 #include "files.cpp"
 
@@ -30,12 +30,14 @@ void drawMenuBar();
 
 void drawFileTabs();
 
+int startupcounter;
+
 SDL_Texture *TEXTURE_NOFILE;
 SDL_Texture *TEXTURE_TABICON[3];
 SDL_Texture *TEXTURE_DOCNAME[MAXDOCS];
 void drawDocumentView();
 
-void drawBottomBar();
+void drawNoFileView();
 
 int GUI_Init()
 {
@@ -226,7 +228,11 @@ void GUI_OpenWindow() {
 
 	menuBarInit();
 	documentViewInit();
-	bottomBarInit();
+	noFileViewInit();
+
+	view = STARTUP;
+	lastView = STARTUP;
+	startupcounter = 10;
 }
 
 void GUI_ChangeWindowTitle(std::string newTitle) {
@@ -238,6 +244,33 @@ void GUI_CloseWindow() {
 	
 	SDL_DestroyWindow(WINDOW);
 	SDL_DestroyRenderer(RENDERER);
+}
+
+void slideView() {
+	int dx = _targetViewX-_viewX;
+	int dy = _targetViewX-_viewX;
+	if (dx+dy == 0) {
+		return;
+	}
+	if (dx != 0) {
+		if (dx<5 && dx>-5) {
+			_viewX = _targetViewX;
+			if (dy<5 && dy>-5) {
+				lastView = view;
+			}
+		} else {
+			_viewX += dx / 5;
+		}
+	}
+	if (dy != 0) {
+		if (dy<5 && dy>-5) {
+			_viewY = _targetViewY;
+		} else {
+			_viewY += dy / 5;
+		}
+	}
+	viewX = (_viewX * WIDTH)/1000;
+	viewY = (_viewY * HEIGHT)/1000;
 }
 
 void GUI_HandleEvents()
@@ -272,19 +305,27 @@ void GUI_HandleEvents()
 }
 
 void GUI_UpdateWindow()
-{
-	SDL_SetRenderDrawColor(RENDERER, COLOR.BG.r, COLOR.BG.g, COLOR.BG.b, 255);
-	SDL_RenderClear(RENDERER);
+{	
+	if (view == STARTUP) {
+		if (startupcounter) {
+			startupcounter --;
+		} else {
+			switchToView(NOFILE);
+		}
+	}
 
 	slideView();
 
 	menuBarUpdate();
 	documentViewUpdate();
-	bottomBarUpdate();
+	noFileViewUpdate();
+
+	SDL_SetRenderDrawColor(RENDERER, COLOR.BG.r, COLOR.BG.g, COLOR.BG.b, 255);
+	SDL_RenderClear(RENDERER);
 
 	drawMenuBar();
 	drawDocumentView();
-	drawBottomBar();
+	drawNoFileView();
 
 	SDL_RenderPresent(RENDERER);
 	SDL_Delay(30);
@@ -304,7 +345,7 @@ void drawMenuBar() {
 	}
 }
 
-void drawDocumentView() {
+void drawDocumentView() {/*
 	switch (mode) {
 	case NOFILE:
 		SDL_SetRenderDrawColor(RENDERER, noFileBtn.getColorRed(), noFileBtn.getColorGreen(), noFileBtn.getColorBlue(), 255);
@@ -367,7 +408,7 @@ void drawDocumentView() {
 			SDL_RenderFillRect(RENDERER, documentViewGetRect());
 			break;
 		}
-	}
+	}*/
 }
 
 void updateDocnameTexture(int i) {
@@ -377,6 +418,10 @@ void updateDocnameTexture(int i) {
 	SDL_FreeSurface(name);
 }
 
-void drawBottomBar() {
-
+void drawNoFileView() {
+	if (view = NOFILE) {
+		SDL_SetRenderDrawColor(RENDERER, noFileBtn.getColorRed(), noFileBtn.getColorGreen(), noFileBtn.getColorBlue(), 255);
+		SDL_RenderFillRect(RENDERER, noFileBtn.getRect());
+		SDL_RenderCopy(RENDERER, TEXTURE_NOFILE, NULL, noFileGetRect());
+	}
 }

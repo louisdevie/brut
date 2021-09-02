@@ -1,6 +1,6 @@
 #include "utils.cpp"
 
-/*	top bar
+/*	top menu bar
 */
 
 #define NTABS 6

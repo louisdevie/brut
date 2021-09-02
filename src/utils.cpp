@@ -53,17 +53,17 @@ int setup(int argc, char** args) {
 		printf("\n⣿⣿ ⢈⣿⣿               ⣿⣿⣿⣿⣿⣿");
 		printf("\n⣿⣿⣿⣿⣿⣏ ⣿⣿⣿⣿⣷⣄ ⣿⣿  ⣿⣿   ⣿⣿");
 		printf("\n⣿⣿ ⢈⣿⣿ ⣿⣿⠁⠈⣿⣿ ⣿⣿⡀⢀⣿⣿   ⣿⣿⡀");
-		printf("\n⣿⣿⣿⣿⡿⠋ ⣿⣿     ⠙⢿⣿⣿⣿⣿   ⠙⢿⣿⣿  V 1.0.0-DEV210901B\n");
+		printf("\n⣿⣿⣿⣿⡿⠋ ⣿⣿     ⠙⢿⣿⣿⣿⣿   ⠙⢿⣿⣿  V 1.0.0-DEV210902A\n");
 		printf("\n~~~ Help on command line options ~~~\n");
-		printf("\n-v, --version    display the version");
-		printf("\n-h, --help       display this message\n");
+		printf("\n-v, --version    display the version and exits");
+		printf("\n-h, --help       display this message and exits\n");
 		printf("\n-Q, --quiet      disable logs");
-		printf("\n-E, --logerrors  log only errors");
+		printf("\n-E, --logerrors  log only errors (the default)");
 		printf("\n-I, --loginfos   log information messages and errors");
 		printf("\n-D, --debug      log everything\n");
 		return 1;
 	} else if (showVersionInfo) {
-		printf("Brut (io.sourceforge.brut) version 1.0.0-dev210901B\n");
+		printf("Brut (io.sourceforge.brut) version 1.0.0-dev210902A\n");
 		return 1;
 	}
 
@@ -214,28 +214,29 @@ private:
 void createNewFile();
 void closeFile();
 
-int mode;
-int prevMode;
+int view;
+int lastView;
 const int STARTUP = 0;
 const int NOFILE = 1;
 const int DOCUMENT = 2;
 int _viewX = 0;
+int _targetViewX = 0;
+int _viewY = 0;
+int _targetViewY = 0;
+int viewX;
+int viewY;
 
-void setMode(int newMode) {
-	if (newMode != mode) {
-		mode = newMode;
-		_viewX = WIDTH*10;
+void switchToView(int newView) {
+	if (newView != view) {
+		view = newView;
 	}
-}
-int getViewX() {
-	return _viewX/10;
-}
-void slideView() {
-	if (_viewX > 5) {
-		_viewX -= _viewX/5;
-	} else if (_viewX > 0) {
-		prevMode = mode;
-		_viewX = 0;
+	if (lastView == STARTUP) {
+		if (view == NOFILE) {
+			_viewX = -1000;
+			_viewY = -1000;
+			_targetViewX = -1000;
+			_targetViewY = 0;
+		}
 	}
 }
 

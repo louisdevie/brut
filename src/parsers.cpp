@@ -11,7 +11,7 @@ const int _STYLE_TITLE = 32;   // four sizes of text :
 const int _STYLE_SECTION = 64; // nothing, SECTION, SECTION+TITLE, TITLE
 const int _STYLE_MONOSPACE = 128; // inline code / code block
 const int _STYLE_QUOTE = 256;
-const int _STYLE_AUTHOR = 512; // quote author
+const int _STYLE_AUTHOR = 512; // quote block author
 const int _STYLE_LINK = 1024;
 const int _STYLE_HIGHLIGHTED = 2048;
 

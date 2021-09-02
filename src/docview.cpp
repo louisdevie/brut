@@ -2,10 +2,8 @@
 #include "button.cpp"
 #include "files.cpp"
 
-/*	Main view (the file need to be renamed)
+/*	document view
 */
-
-SDL_Rect mainViewRect;
 
 SDL_Rect documentTabRect[MAXDOCS];
 SDL_Rect documentTabSrcRect[MAXDOCS];
@@ -19,12 +17,7 @@ SDL_Rect documentRect;
 SDL_Rect newDocumentRect;
 Button closeTabBtn;
 
-int startupcounter;
-
-SDL_Rect noFileRect;
-Button noFileBtn;
-
-void documentViewInit() {
+void documentViewInit() {/*
 	mainViewRect.y = 70;
 	documentRect.y = 95;
 	newDocumentRect.x = -25;
@@ -51,10 +44,10 @@ void documentViewInit() {
 	noFileBtn.init();
 	noFileBtn.bindTo(createNewFile);
 
-	selectedDocument = -1;
+	selectedDocument = -1;*/
 }
 
-bool documentViewMouseMotion(int mouseX, int mouseY) {
+bool documentViewMouseMotion(int mouseX, int mouseY) {/*
 	switch (mode) {
 	case NOFILE:
 		return noFileBtn.mouseMotion(mouseX, mouseY);
@@ -62,10 +55,10 @@ bool documentViewMouseMotion(int mouseX, int mouseY) {
 	case DOCUMENT:
 		return closeTabBtn.mouseMotion(mouseX, mouseY);
 	}
-	return false;
+	return false;*/
 }
 
-bool documentViewMouseDown(int btn, int mouseX, int mouseY) {
+bool documentViewMouseDown(int btn, int mouseX, int mouseY) {/*
 	switch (mode) {
 	case NOFILE:
 		if (btn == SDL_BUTTON_LEFT) {
@@ -79,10 +72,10 @@ bool documentViewMouseDown(int btn, int mouseX, int mouseY) {
 		}
 		break;
 	}
-	return false;
+	return false;*/
 }
 
-bool documentViewMouseUp(int btn, int mouseX, int mouseY) {
+bool documentViewMouseUp(int btn, int mouseX, int mouseY) {/*
 	switch (mode) {
 	case NOFILE:
 		if (btn == SDL_BUTTON_LEFT) {
@@ -96,10 +89,10 @@ bool documentViewMouseUp(int btn, int mouseX, int mouseY) {
 		}
 		break;
 	}
-	return false;
+	return false;*/
 }
 
-void documentViewUpdate() {
+void documentViewUpdate() {/*
 	switch (mode) {
 	case STARTUP:
 		// wait a little at startup
@@ -173,7 +166,7 @@ void documentViewUpdate() {
 
 	mainViewRect.x = getViewX()+10;
 	mainViewRect.w = WIDTH-20;
-	mainViewRect.h = HEIGHT-115;
+	mainViewRect.h = HEIGHT-115;*/
 }
 
 SDL_Rect *documentViewGetRect() {
@@ -210,17 +203,4 @@ SDL_Rect *getTabDstRect(int i) {
 
 SDL_Rect *getTabIconRect(int i) {
 	return &documentTabIconRect[i];
-}
-
-void noFileTextureSize(int w, int h, int w2, int h2) {
-	noFileRect.x = 0;
-	noFileRect.y = -h; // hide by default
-	noFileRect.w = w;
-	noFileRect.h = h;
-	noFileBtn.resize(w2+30, h2+20);
-	noFileBtn.place(0, -h2-20); // same
-}
-
-SDL_Rect *noFileGetRect() {
-	return &noFileRect;
 }

@@ -58,12 +58,12 @@ void createNewFile() {
 	textChanged = true;
 	GUI_ChangeWindowTitle("Brut: "+openFiles[selectedDocument].name);
 	updateDocnameTexture(selectedDocument);
-	setMode(DOCUMENT); // switch to DOCUMENT mode if we're in another view
+	switchToView(DOCUMENT); // switch to DOCUMENT mode if we're in another view
 }
 
 
 void closeFile() {
 	selectedDocument = removeFile(selectedDocument);
 	GUI_ChangeWindowTitle("Brut.");
-	setMode(NOFILE);
+	switchToView(NOFILE);
 }
