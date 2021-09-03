@@ -53,7 +53,7 @@ int setup(int argc, char** args) {
 		printf("\n⣿⣿ ⢈⣿⣿               ⣿⣿⣿⣿⣿⣿");
 		printf("\n⣿⣿⣿⣿⣿⣏ ⣿⣿⣿⣿⣷⣄ ⣿⣿  ⣿⣿   ⣿⣿");
 		printf("\n⣿⣿ ⢈⣿⣿ ⣿⣿⠁⠈⣿⣿ ⣿⣿⡀⢀⣿⣿   ⣿⣿⡀");
-		printf("\n⣿⣿⣿⣿⡿⠋ ⣿⣿     ⠙⢿⣿⣿⣿⣿   ⠙⢿⣿⣿  V 1.0.0-DEV210902A\n");
+		printf("\n⣿⣿⣿⣿⡿⠋ ⣿⣿     ⠙⢿⣿⣿⣿⣿   ⠙⢿⣿⣿  V 1.0.0-DEV210903A\n");
 		printf("\n~~~ Help on command line options ~~~\n");
 		printf("\n-v, --version    display the version and exits");
 		printf("\n-h, --help       display this message and exits\n");
@@ -63,7 +63,7 @@ int setup(int argc, char** args) {
 		printf("\n-D, --debug      log everything\n");
 		return 1;
 	} else if (showVersionInfo) {
-		printf("Brut (io.sourceforge.brut) version 1.0.0-dev210902A\n");
+		printf("Brut (io.sourceforge.brut) version 1.0.0-dev210903A\n");
 		return 1;
 	}
 
@@ -229,13 +229,14 @@ int viewY;
 void switchToView(int newView) {
 	if (newView != view) {
 		view = newView;
-	}
-	if (lastView == STARTUP) {
-		if (view == NOFILE) {
-			_viewX = -1000;
-			_viewY = -1000;
-			_targetViewX = -1000;
-			_targetViewY = 0;
+		if (lastView == STARTUP) {
+			if (view == NOFILE) {
+				debugMsg("UTILS: switched from STARTUP to NOFILE");
+				_viewX = -1000;
+				_viewY = 1000;
+				_targetViewX = -1000;
+				_targetViewY = 0;
+			}
 		}
 	}
 }

@@ -54,8 +54,8 @@ bool documentViewMouseMotion(int mouseX, int mouseY) {/*
 
 	case DOCUMENT:
 		return closeTabBtn.mouseMotion(mouseX, mouseY);
-	}
-	return false;*/
+	}*/
+	return false;
 }
 
 bool documentViewMouseDown(int btn, int mouseX, int mouseY) {/*
@@ -71,8 +71,8 @@ bool documentViewMouseDown(int btn, int mouseX, int mouseY) {/*
 			return closeTabBtn.leftMouseDown(mouseX, mouseY);
 		}
 		break;
-	}
-	return false;*/
+	}*/
+	return false;
 }
 
 bool documentViewMouseUp(int btn, int mouseX, int mouseY) {/*
@@ -88,8 +88,8 @@ bool documentViewMouseUp(int btn, int mouseX, int mouseY) {/*
 			return closeTabBtn.leftMouseUp(mouseX, mouseY);
 		}
 		break;
-	}
-	return false;*/
+	}*/
+	return false;
 }
 
 void documentViewUpdate() {/*

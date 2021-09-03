@@ -4,7 +4,7 @@
 
 #include "menubar.cpp"
 #include "docview.cpp"
-#include "nofile.cpp"
+#include "nfview.cpp"
 #include "utils.cpp"
 #include "files.cpp"
 
@@ -248,7 +248,7 @@ void GUI_CloseWindow() {
 
 void slideView() {
 	int dx = _targetViewX-_viewX;
-	int dy = _targetViewX-_viewX;
+	int dy = _targetViewY-_viewY;
 	if (dx+dy == 0) {
 		return;
 	}
@@ -293,13 +293,14 @@ void GUI_HandleEvents()
 
 		case SDL_MOUSEMOTION:
 			if (menuBarMouseMotion(event.motion.x, event.motion.y)) {break;}
-			documentViewMouseMotion(event.motion.x, event.motion.y); break;
-
+			if (documentViewMouseMotion(event.motion.x, event.motion.y)) {break;}			
+			if (noFileViewMouseMotion(event.motion.x, event.motion.y)) {break;}
 		case SDL_MOUSEBUTTONDOWN:
-			documentViewMouseDown(event.button.button, event.button.x, event.button.y);	break;
-
+			if (documentViewMouseDown(event.button.button, event.button.x, event.button.y)) {break;}
+			if (noFileViewMouseDown(event.button.button, event.button.x, event.button.y)) {break;}
 		case SDL_MOUSEBUTTONUP:
-			documentViewMouseUp(event.button.button, event.button.x, event.button.y);	break;
+			if (documentViewMouseUp(event.button.button, event.button.x, event.button.y)) {break;}
+			if (noFileViewMouseUp(event.button.button, event.button.x, event.button.y)) {break;}
 		}
 	}
 }
@@ -419,7 +420,7 @@ void updateDocnameTexture(int i) {
 }
 
 void drawNoFileView() {
-	if (view = NOFILE) {
+	if (view == NOFILE) {
 		SDL_SetRenderDrawColor(RENDERER, noFileBtn.getColorRed(), noFileBtn.getColorGreen(), noFileBtn.getColorBlue(), 255);
 		SDL_RenderFillRect(RENDERER, noFileBtn.getRect());
 		SDL_RenderCopy(RENDERER, TEXTURE_NOFILE, NULL, noFileGetRect());
