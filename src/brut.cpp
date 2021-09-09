@@ -1,5 +1,5 @@
 #include "gui.cpp"
-#include "filemanager.cpp"
+#include "files.cpp"
 #include "utils.cpp"
 
 /*	entry point of the app
@@ -7,7 +7,9 @@
 
 int main(int argc, char** args)
 {
-	setup(argc, args);
+	if (setup(argc, args)) {
+		return 0;
+	}
 
 	if(GUI_Init())
 	{
@@ -17,6 +19,21 @@ int main(int argc, char** args)
 	// setup
 	GUI_OpenWindow();
 	GUI_LoadResources();
+	setAppID("io.sourceforge.brut");
+	std::string path = getResourcePath(RES_LANG, "en");
+	int status = loadLanguage(path);
+	if (status) {
+		switch (status) {
+		case LANGERR_UNKNOWN:
+			logError("LANGUAGES : Unknown error happened while trying to load "+path, 0);
+			break;
+		case LANGERR_FAILEDTOOPEN:
+			logError("LANGUAGES : Couldn't open "+path, 0);
+		case LANGERR_MISSINGFIELD:
+			logError("LANGUAGES : Misssing header field(s) in file "+path, 0);
+		}
+		logInfo("LANGUAGES : Couldn't load default language file. Using a blank language instead.");
+	}
 	GUI_GenerateTextures();
 
 	while (!GUI_QUIT) // main loop
@@ -37,13 +54,16 @@ int main(int argc, char** args)
 
 
 void createNewFile() {
-	selectedDocument = appendFile({getCaption(NTABS+2), ""}); // no path means it's not saved anywhere yet
+	selectedDocument = appendFile({getCaption(NTABS+2), "", "Test text"}); // no path means it's not saved anywhere yet
+	textChanged = true;
+	GUI_ChangeWindowTitle("Brut: "+openFiles[selectedDocument].name);
 	updateDocnameTexture(selectedDocument);
-	setMode(DOCUMENT); // switch to DOCUMENT mode if we're in another view
+	switchToView(DOCUMENT); // switch to DOCUMENT mode if we're in another view
 }
 
 
 void closeFile() {
 	selectedDocument = removeFile(selectedDocument);
-	setMode(NOFILE);
+	GUI_ChangeWindowTitle("Brut.");
+	switchToView(NOFILE);
 }

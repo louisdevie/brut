@@ -13,6 +13,7 @@ struct File
 {
 	std::string name;
 	std::string path;
+	std::string content;
 };
 
 File openFiles[MAXDOCS];

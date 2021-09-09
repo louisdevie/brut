@@ -4,9 +4,9 @@
 
 #include "menubar.cpp"
 #include "docview.cpp"
-#include "bottombar.cpp"
+#include "nfview.cpp"
 #include "utils.cpp"
-#include "filemanager.cpp"
+#include "files.cpp"
 
 /*	SDL stuff
 */
@@ -15,6 +15,8 @@ SDL_Window *WINDOW = NULL;
 SDL_Renderer *RENDERER = NULL;
 
 TTF_Font *FONT_INTERFACE = NULL;
+#include "textrenderer.cpp"
+
 SDL_Surface *ICON_MISSING = NULL; //
 SDL_Surface *ICON_MENUBAR[NTABS]; // temp
 SDL_Surface *ICON_TAB[3];
@@ -28,16 +30,18 @@ void drawMenuBar();
 
 void drawFileTabs();
 
+int startupcounter;
+
 SDL_Texture *TEXTURE_NOFILE;
 SDL_Texture *TEXTURE_TABICON[3];
 SDL_Texture *TEXTURE_DOCNAME[MAXDOCS];
 void drawDocumentView();
 
-void drawBottomBar();
+void drawNoFileView();
 
 int GUI_Init()
 {
-	logInfo("GUI: initializing ...");
+	debugMsg("GUI: initializing ...");
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		fprintf(stderr, "couldn't initialize SDL2: %s\n", SDL_GetError());
@@ -61,7 +65,7 @@ int GUI_Init()
 
 void GUI_Quit()
 {
-	logInfo("GUI: exitting ...");
+	debugMsg("GUI: exitting ...");
 
 	SDL_Quit();
 	TTF_Quit();
@@ -69,7 +73,7 @@ void GUI_Quit()
 }
 
 void GUI_LoadResources() {
-	logInfo("GUI: loading resources ...");
+	debugMsg("GUI: loading resources ...");
 
 	FONT_INTERFACE = TTF_OpenFont(getResourcePath(RES_FONT, "Regular").c_str(), 18);
 	if (!FONT_INTERFACE)
@@ -80,7 +84,7 @@ void GUI_LoadResources() {
 	ICON_MISSING = IMG_Load(getResourcePath(RES_ICON, "missing").c_str());
 	if (!ICON_MISSING)
 	{
-		fprintf(stderr, "error loading fallback icon: %s", SDL_GetError());
+		logError("error loading fallback icon: %s", 1);
 		ICON_MISSING = SDL_CreateRGBSurface(0, 32, 32, 32, rmask, gmask, bmask, amask);
 	}
 	std::string icons[NTABS] = {"open", "clock", "save", "copy", "sliders", "info"};
@@ -104,12 +108,10 @@ void GUI_LoadResources() {
 			SDL_BlitSurface(ICON_MISSING, NULL, ICON_TAB[i], &defaultrect); // use default icon instead
 		}
 	}
-
-	loadLang();
 }
 
 void GUI_UnloadResources() {
-	logInfo("GUI: unloading resources ...");
+	debugMsg("GUI: unloading resources ...");
 
 	TTF_CloseFont(FONT_INTERFACE); 
 
@@ -120,7 +122,7 @@ void GUI_UnloadResources() {
 }
 
 void GUI_GenerateTextures() {
-	logInfo("GUI: generating textures ...");
+	debugMsg("GUI: generating textures ...");
 
 	SDL_Rect rect1 = {0, 0, 32, 32};
 	SDL_Rect rect2 = {42, 0, 32, 32};
@@ -169,10 +171,13 @@ void GUI_GenerateTextures() {
 		TEXTURE_TABICON[i] = SDL_CreateTextureFromSurface(RENDERER, ICON_TAB[i]);
 		SDL_FreeSurface(ICON_TAB[i]);
 	}
+
+	RENDERED_TEXT = SDL_CreateRGBSurface(0, 100, 100, 32, rmask, gmask, bmask, amask);
+	greycolor = SDL_MapRGB(RENDERED_TEXT->format, 128, 128, 128);
 }
 
 void GUI_DestroyTextures() {
-	logInfo("GUI: destroying textures ...");
+	debugMsg("GUI: destroying textures ...");
 	
 	for (int i=0; i<NTABS; i++) {
 		SDL_DestroyTexture(TEXTURE_MENUBAR[i]);
@@ -189,10 +194,15 @@ void GUI_DestroyTextures() {
 			SDL_DestroyTexture(TEXTURE_DOCNAME[i]);
 		}
 	}
+
+	SDL_FreeSurface(RENDERED_TEXT);
+	if (RTEX) {
+		SDL_DestroyTexture(RTEX);
+	}
 }
 
 void GUI_OpenWindow() {
-	logInfo("GUI: creating window ...");
+	debugMsg("GUI: creating window ...");
 	
 	SDL_DisplayMode displayMode;
 	if(SDL_GetDesktopDisplayMode(0, &displayMode) < 0)
@@ -218,14 +228,49 @@ void GUI_OpenWindow() {
 
 	menuBarInit();
 	documentViewInit();
-	bottomBarInit();
+	noFileViewInit();
+
+	view = STARTUP;
+	lastView = STARTUP;
+	startupcounter = 10;
+}
+
+void GUI_ChangeWindowTitle(std::string newTitle) {
+	SDL_SetWindowTitle(WINDOW, newTitle.c_str());
 }
 
 void GUI_CloseWindow() {
-	logInfo("GUI: closing window ...");
+	debugMsg("GUI: closing window ...");
 	
 	SDL_DestroyWindow(WINDOW);
 	SDL_DestroyRenderer(RENDERER);
+}
+
+void slideView() {
+	int dx = _targetViewX-_viewX;
+	int dy = _targetViewY-_viewY;
+	if (dx+dy == 0) {
+		return;
+	}
+	if (dx != 0) {
+		if (dx<5 && dx>-5) {
+			_viewX = _targetViewX;
+			if (dy<5 && dy>-5) {
+				lastView = view;
+			}
+		} else {
+			_viewX += dx / 5;
+		}
+	}
+	if (dy != 0) {
+		if (dy<5 && dy>-5) {
+			_viewY = _targetViewY;
+		} else {
+			_viewY += dy / 5;
+		}
+	}
+	viewX = (_viewX * WIDTH)/1000;
+	viewY = (_viewY * HEIGHT)/1000;
 }
 
 void GUI_HandleEvents()
@@ -248,31 +293,40 @@ void GUI_HandleEvents()
 
 		case SDL_MOUSEMOTION:
 			if (menuBarMouseMotion(event.motion.x, event.motion.y)) {break;}
-			documentViewMouseMotion(event.motion.x, event.motion.y); break;
-
+			if (documentViewMouseMotion(event.motion.x, event.motion.y)) {break;}			
+			if (noFileViewMouseMotion(event.motion.x, event.motion.y)) {break;}
 		case SDL_MOUSEBUTTONDOWN:
-			documentViewMouseDown(event.button.button, event.button.x, event.button.y);	break;
-
+			if (documentViewMouseDown(event.button.button, event.button.x, event.button.y)) {break;}
+			if (noFileViewMouseDown(event.button.button, event.button.x, event.button.y)) {break;}
 		case SDL_MOUSEBUTTONUP:
-			documentViewMouseUp(event.button.button, event.button.x, event.button.y);	break;
+			if (documentViewMouseUp(event.button.button, event.button.x, event.button.y)) {break;}
+			if (noFileViewMouseUp(event.button.button, event.button.x, event.button.y)) {break;}
 		}
 	}
 }
 
 void GUI_UpdateWindow()
-{
-	SDL_SetRenderDrawColor(RENDERER, COLOR.BG.r, COLOR.BG.g, COLOR.BG.b, 255);
-	SDL_RenderClear(RENDERER);
+{	
+	if (view == STARTUP) {
+		if (startupcounter) {
+			startupcounter --;
+		} else {
+			switchToView(NOFILE);
+		}
+	}
 
 	slideView();
 
 	menuBarUpdate();
 	documentViewUpdate();
-	bottomBarUpdate();
+	noFileViewUpdate();
+
+	SDL_SetRenderDrawColor(RENDERER, COLOR.BG.r, COLOR.BG.g, COLOR.BG.b, 255);
+	SDL_RenderClear(RENDERER);
 
 	drawMenuBar();
 	drawDocumentView();
-	drawBottomBar();
+	drawNoFileView();
 
 	SDL_RenderPresent(RENDERER);
 	SDL_Delay(30);
@@ -292,7 +346,7 @@ void drawMenuBar() {
 	}
 }
 
-void drawDocumentView() {
+void drawDocumentView() {/*
 	switch (mode) {
 	case NOFILE:
 		SDL_SetRenderDrawColor(RENDERER, noFileBtn.getColorRed(), noFileBtn.getColorGreen(), noFileBtn.getColorBlue(), 255);
@@ -321,6 +375,16 @@ void drawDocumentView() {
 		}
 		SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
 		SDL_RenderFillRect(RENDERER, documentViewGetRect());
+		if (textChanged) {
+			renderText(0, 0, 0);
+			if (RTEX) {
+				SDL_DestroyTexture(RTEX);
+			}
+			RTEX = SDL_CreateTextureFromSurface(RENDERER, RENDERED_TEXT);
+			textChanged = false;
+		}
+		SDL_Rect rect = {documentRect.x+10, documentRect.y+10, 100, 100};
+		SDL_RenderCopy(RENDERER, RTEX, NULL, &rect);
 		break;
 	}
 	if (mode != prevMode) {
@@ -345,7 +409,7 @@ void drawDocumentView() {
 			SDL_RenderFillRect(RENDERER, documentViewGetRect());
 			break;
 		}
-	}
+	}*/
 }
 
 void updateDocnameTexture(int i) {
@@ -355,6 +419,10 @@ void updateDocnameTexture(int i) {
 	SDL_FreeSurface(name);
 }
 
-void drawBottomBar() {
-
+void drawNoFileView() {
+	if (view == NOFILE) {
+		SDL_SetRenderDrawColor(RENDERER, noFileBtn.getColorRed(), noFileBtn.getColorGreen(), noFileBtn.getColorBlue(), 255);
+		SDL_RenderFillRect(RENDERER, noFileBtn.getRect());
+		SDL_RenderCopy(RENDERER, TEXTURE_NOFILE, NULL, noFileGetRect());
+	}
 }

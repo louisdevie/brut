@@ -2,8 +2,11 @@
 
 #include <stdio.h>
 #include <string>
+#include <vector>
 #include <fstream>
 #include <iostream>
+
+#include "languages.hpp"
 
 /*	this is included everywhere
 */
@@ -22,22 +25,49 @@ const int ERROR = 1;
 const int INFO = 2;
 const int DEBUG = 3;
 
-void setup(int argc, char** args) {
+int setup(int argc, char** args) {
 	LOGLVL = ERROR;
+	bool showHelp = false;
+	bool showVersionInfo = false;
 
-	int i = 0;
+	int i = 1;
 	while (i < argc) {
-		if (args[i] == "-Q" || args[i] == "--quiet") {
+		if ((strcmp(args[i], "-Q") * strcmp(args[i], "--quiet")) == 0) {
 			LOGLVL = QUIET;
-		} else if (args[i] == "-E" || args[i] == "--logerrors") {
+		} else if ((strcmp(args[i], "-E") * strcmp(args[i], "--logerrors")) == 0) {
 			LOGLVL = ERROR;
-		} else if (args[i] == "-I" || args[i] == "--loginfos") {
+		} else if ((strcmp(args[i], "-I") * strcmp(args[i], "--loginfos")) == 0) {
 			LOGLVL = INFO;
-		} else if (args[i] == "-D" || args[i] == "--debug") {
+		} else if ((strcmp(args[i], "-D") * strcmp(args[i], "--debug")) == 0) {
 			LOGLVL = DEBUG;
+		} else if ((strcmp(args[i], "-h") * strcmp(args[i], "--help")) == 0) {
+			showHelp = true;
+		} else if ((strcmp(args[i], "-v") * strcmp(args[i], "--version")) == 0) {
+			showVersionInfo = true;
 		}
 		i++;
 	}
+
+	if (showHelp) {
+		printf("\n⣿⣿⣿⣿⣷⣄                 ⣿⣿");
+		printf("\n⣿⣿ ⢈⣿⣿               ⣿⣿⣿⣿⣿⣿");
+		printf("\n⣿⣿⣿⣿⣿⣏ ⣿⣿⣿⣿⣷⣄ ⣿⣿  ⣿⣿   ⣿⣿");
+		printf("\n⣿⣿ ⢈⣿⣿ ⣿⣿⠁⠈⣿⣿ ⣿⣿⡀⢀⣿⣿   ⣿⣿⡀");
+		printf("\n⣿⣿⣿⣿⡿⠋ ⣿⣿     ⠙⢿⣿⣿⣿⣿   ⠙⢿⣿⣿  V 1.0.0-DEV210903A\n");
+		printf("\n~~~ Help on command line options ~~~\n");
+		printf("\n-v, --version    display the version and exits");
+		printf("\n-h, --help       display this message and exits\n");
+		printf("\n-Q, --quiet      disable logs");
+		printf("\n-E, --logerrors  log only errors (the default)");
+		printf("\n-I, --loginfos   log information messages and errors");
+		printf("\n-D, --debug      log everything\n");
+		return 1;
+	} else if (showVersionInfo) {
+		printf("Brut (io.sourceforge.brut) version 1.0.0-dev210903A\n");
+		return 1;
+	}
+
+	return 0;
 }
 
 bool isBoundedToCoords(int x, int y, int x1, int y1, int x2, int y2) {
@@ -72,7 +102,7 @@ std::string getResourcePath(int type, std::string resource) {
 		return "res/fonts/SourceSansPro-" + resource + ".ttf";
 	}
 	if (type == RES_LANG) {
-		return "res/languages/" + resource + ".lang";
+		return "res/locale/" + resource + ".lang";
 	}
 	return "";
 }
@@ -100,6 +130,7 @@ Uint32 amask = 0xff000000;
 
 std::string ERR = "\x1b[1;31m[ERROR] \x1b[0m";
 std::string INF = "\x1b[1;34m[INFO ] \x1b[0m";
+std::string DBG = "\x1b[1;36m[DEBUG] \x1b[0m";
 
 void logError(std::string errmsg, bool sdlerr) {
 	if (LOGLVL >= ERROR) {
@@ -111,37 +142,15 @@ void logError(std::string errmsg, bool sdlerr) {
 	}
 }
 
-void logInfo(std::string errmsg) {
+void logInfo(std::string msg) {
 	if (LOGLVL >= INFO) {
-		printf((INF + errmsg + "\n").c_str());
+		printf((INF + msg + "\n").c_str());
 	}
 }
 
-#define DICTSIZE 20
-
-std::string _LANG[DICTSIZE];
-
-void loadLang(){
-	std::fstream langfile;
-	int i=0;
-
-	for (int i=0; i<DICTSIZE; i++) {
-		_LANG[i]="<LANG_" + std::to_string(i) + ">";
-	}
-
-	langfile.open(getResourcePath(RES_LANG, "en"), std::ios::in);
-	if (langfile.is_open()) {
-		while (getline(langfile, _LANG[i]) && (i+1)<DICTSIZE) {i++;}
-		langfile.close();
-	}
-}
-
-std::string getCaption(int i) {
-	if (i >= DICTSIZE) {
-		return "<LANG_" + std::to_string(i) + ">";
-	} else {
-		std::string a = _LANG[i];
-		return _LANG[i];
+void debugMsg(std::string msg) {
+	if (LOGLVL >= DEBUG) {
+		printf((DBG + msg + "\n").c_str());
 	}
 }
 
@@ -205,27 +214,32 @@ private:
 void createNewFile();
 void closeFile();
 
-int mode;
-int prevMode;
+int view;
+int lastView;
 const int STARTUP = 0;
 const int NOFILE = 1;
 const int DOCUMENT = 2;
 int _viewX = 0;
+int _targetViewX = 0;
+int _viewY = 0;
+int _targetViewY = 0;
+int viewX;
+int viewY;
 
-void setMode(int newMode) {
-	if (newMode != mode) {
-		mode = newMode;
-		_viewX = WIDTH*10;
+void switchToView(int newView) {
+	if (newView != view) {
+		view = newView;
+		if (lastView == STARTUP) {
+			if (view == NOFILE) {
+				debugMsg("UTILS: switched from STARTUP to NOFILE");
+				_viewX = -1000;
+				_viewY = 1000;
+				_targetViewX = -1000;
+				_targetViewY = 0;
+			}
+		}
 	}
 }
-int getViewX() {
-	return _viewX/10;
-}
-void slideView() {
-	if (_viewX > 5) {
-		_viewX -= _viewX/5;
-	} else if (_viewX > 0) {
-		prevMode = mode;
-		_viewX = 0;
-	}
-}
+
+bool MARKDOWN = false;
+std::string NEWLINE = "\n";
