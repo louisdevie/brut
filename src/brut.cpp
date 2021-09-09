@@ -19,7 +19,7 @@ int main(int argc, char** args)
 	// setup
 	GUI_OpenWindow();
 	GUI_LoadResources();
-	setAppID("io.sourceforge.brut");
+	setAppID("io.sourceforge.brut:100DKIIB");
 	std::string path = getResourcePath(RES_LANG, "en");
 	int status = loadLanguage(path);
 	if (status) {
