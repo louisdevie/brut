@@ -23,9 +23,29 @@ std::vector<_LANG_DSTR> _LANG_RULES_SPAN;
 std::vector<_LANG_DSTR> _LANG_APP_TEXT;
 int _LANG_DICT_SIZE;
 
+std::string *splitLine;
+size_t splitNext;
+size_t splitLast;
+std::string splitResult;
+void splitBegin(std::string *line) {
+	splitLine = line;
+	splitNext = 0;
+	splitLast = 0;
+}
+bool split() {
+	if ((splitNext = splitLine->find(_LANG_SEPCHAR, splitLast)) != std::string::npos) {
+		splitResult = splitline->substr(splitLast, splitNext-splitLast);
+		splitLast = splitNext+1;
+		return true;
+	} else {
+		return false;
+	}
+}
+
 const int LANGERR_UNKNOWN = 1;
 const int LANGERR_FAILEDTOOPEN = 2;
 const int LANGERR_MISSINGFIELD = 3;
+const int LANGERR_FOREIGNAPP = 4;
 
 void setAppID(std::string ID) {
 	_LANG_APP_ID = ID;
@@ -42,7 +62,11 @@ int loadLanguage(std::string path) {
 	}
 	
 	while (getline(langFile, buffer)) {
-		if (i > 6) {
+		if (i == 0) {
+			splitBegin(&buffer);
+			if (!splitNext()) {return LANGERR_MISSINGFIELD;}
+			if (_LANG_APP_ID && splitResult != _LANG_APP_ID) {return LANGERR_FOREIGNAPP;}
+		} else if (i > 6) {
 			_LANG_APP_TEXT.push_back({buffer, ""});
 		}
 		i++;
