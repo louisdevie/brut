@@ -13,6 +13,7 @@
 
 // window size
 int WIDTH, HEIGHT;
+bool sizeChanged;
 
 // resource type
 const int RES_ICON = 0;
@@ -53,7 +54,7 @@ int setup(int argc, char** args) {
 		printf("\n⣿⣿ ⢈⣿⣿               ⣿⣿⣿⣿⣿⣿");
 		printf("\n⣿⣿⣿⣿⣿⣏ ⣿⣿⣿⣿⣷⣄ ⣿⣿  ⣿⣿   ⣿⣿");
 		printf("\n⣿⣿ ⢈⣿⣿ ⣿⣿⠁⠈⣿⣿ ⣿⣿⡀⢀⣿⣿   ⣿⣿⡀");
-		printf("\n⣿⣿⣿⣿⡿⠋ ⣿⣿     ⠙⢿⣿⣿⣿⣿   ⠙⢿⣿⣿  V 1.0.0-DEV210909B\n");
+		printf("\n⣿⣿⣿⣿⡿⠋ ⣿⣿     ⠙⢿⣿⣿⣿⣿   ⠙⢿⣿⣿  V 1.0.0-DEV210911A\n");
 		printf("\n~~~ Help on command line options ~~~\n");
 		printf("\n-v, --version    display the version and exits");
 		printf("\n-h, --help       display this message and exits\n");
@@ -63,7 +64,7 @@ int setup(int argc, char** args) {
 		printf("\n-D, --debug      log everything\n");
 		return 1;
 	} else if (showVersionInfo) {
-		printf("Brut (io.sourceforge.brut) version 1.0.0-dev210909B\n");
+		printf("Brut (io.sourceforge.brut) version 1.0.0-dev210911A\n");
 		return 1;
 	}
 

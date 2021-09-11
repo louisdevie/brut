@@ -19,7 +19,7 @@ int main(int argc, char** args)
 	// setup
 	GUI_OpenWindow();
 	GUI_LoadResources();
-	setAppID("io.sourceforge.brut:100DKIIB");
+	setAppID("io.sourceforge.brut:100DKILA");
 	std::string path = getResourcePath(RES_LANG, "en");
 	int status = loadLanguage(path);
 	if (status) {
@@ -29,8 +29,13 @@ int main(int argc, char** args)
 			break;
 		case LANGERR_FAILEDTOOPEN:
 			logError("LANGUAGES : Couldn't open "+path, 0);
+			break;
 		case LANGERR_MISSINGFIELD:
 			logError("LANGUAGES : Misssing header field(s) in file "+path, 0);
+			break;
+		case LANGERR_FOREIGNAPP:
+			logError("LANGUAGES : The file "+path+" doesn't belong to this app", 0);
+			break;
 		}
 		logInfo("LANGUAGES : Couldn't load default language file. Using a blank language instead.");
 	}

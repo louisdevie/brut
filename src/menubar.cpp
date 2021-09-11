@@ -43,7 +43,7 @@ bool menuBarMouseMotion(int mouseX, int mouseY) {
 }
 
 void menuBarUpdate() {
-	if (menuBarFocus != prevMenuBarFocus) {
+	if (menuBarFocus != prevMenuBarFocus || sizeChanged) {
 		if (menuBarFocus == -1) {
 			for (int i=0; i<NTABS; i++) {
 				menuBarButtonX[i].goTo(10+((WIDTH-20)/NTABS)*i);

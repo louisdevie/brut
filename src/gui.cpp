@@ -87,7 +87,7 @@ void GUI_LoadResources() {
 		logError("error loading fallback icon: %s", 1);
 		ICON_MISSING = SDL_CreateRGBSurface(0, 32, 32, 32, rmask, gmask, bmask, amask);
 	}
-	std::string icons[NTABS] = {"open", "clock", "save", "copy", "sliders", "info"};
+	std::string icons[NTABS] = {"open", "clock", "save", "export", "sliders", "info"};
 	for (int i=0; i<NTABS; i++) {
 		ICON_MENUBAR[i] = IMG_Load(getResourcePath(RES_ICON, icons[i]).c_str());
 		if (!ICON_MENUBAR[i])
@@ -269,12 +269,12 @@ void slideView() {
 			_viewY += dy / 5;
 		}
 	}
-	viewX = (_viewX * WIDTH)/1000;
-	viewY = (_viewY * HEIGHT)/1000;
 }
 
 void GUI_HandleEvents()
 {
+	sizeChanged = false;
+
 	while (SDL_PollEvent(&event) > 0)
 	{
 		switch (event.type)
@@ -289,6 +289,7 @@ void GUI_HandleEvents()
 			case SDL_WINDOWEVENT_RESIZED:
 				WIDTH = event.window.data1;
 				HEIGHT = event.window.data2;
+				sizeChanged = true;
 			}
 
 		case SDL_MOUSEMOTION:
@@ -316,6 +317,8 @@ void GUI_UpdateWindow()
 	}
 
 	slideView();
+	viewX = (_viewX * WIDTH)/1000;
+	viewY = (_viewY * HEIGHT)/1000;
 
 	menuBarUpdate();
 	documentViewUpdate();

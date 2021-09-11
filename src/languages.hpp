@@ -4,12 +4,14 @@
 #include <vector>
 #include <fstream>
 
+std::string _LANG_SEPCHAR = "\\";
+
 struct _LANG_DSTR {
 	std::string STR;
 	std::string ADDINFO;
 };
 
-std::string _LANG_APP_ID;
+std::string _LANG_APP_ID = "!";
 std::string _LANG_CURRENT_UID;
 std::string _LANG_CURRENT_NAME;
 std::string _LANG_DECSEP;
@@ -34,12 +36,11 @@ void splitBegin(std::string *line) {
 }
 bool split() {
 	if ((splitNext = splitLine->find(_LANG_SEPCHAR, splitLast)) != std::string::npos) {
-		splitResult = splitline->substr(splitLast, splitNext-splitLast);
+		splitResult = splitLine->substr(splitLast, splitNext-splitLast);
 		splitLast = splitNext+1;
 		return true;
-	} else {
-		return false;
 	}
+	return false;
 }
 
 const int LANGERR_UNKNOWN = 1;
@@ -64,8 +65,8 @@ int loadLanguage(std::string path) {
 	while (getline(langFile, buffer)) {
 		if (i == 0) {
 			splitBegin(&buffer);
-			if (!splitNext()) {return LANGERR_MISSINGFIELD;}
-			if (_LANG_APP_ID && splitResult != _LANG_APP_ID) {return LANGERR_FOREIGNAPP;}
+			if (!split()) {return LANGERR_MISSINGFIELD;}
+			if (_LANG_APP_ID != "!" && splitResult != _LANG_APP_ID) {return LANGERR_FOREIGNAPP;}
 		} else if (i > 6) {
 			_LANG_APP_TEXT.push_back({buffer, ""});
 		}

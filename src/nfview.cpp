@@ -39,11 +39,13 @@ bool noFileViewMouseUp(int btn, int mouseX, int mouseY) {
 
 void noFileViewUpdate() {
 	if (view == NOFILE) {
-		noFileRect.x = - WIDTH/2 - noFileRect.w/2 - viewX;
-		noFileRect.y = 30 + HEIGHT/2 - noFileRect.h/2 - viewY;
-		noFileBtn.place(
-			noFileRect.x + noFileRect.w/2 - noFileBtn.getNormalRect()->w/2,
-			noFileRect.y + noFileRect.h + 10 - noFileBtn.getNormalRect()->h);
+		if (lastView != NOFILE || sizeChanged) {
+			noFileRect.x = - WIDTH/2 - noFileRect.w/2 - viewX;
+			noFileRect.y = 30 + HEIGHT/2 - noFileRect.h/2 - viewY;
+			noFileBtn.place(
+				noFileRect.x + noFileRect.w/2 - noFileBtn.getNormalRect()->w/2,
+				noFileRect.y + noFileRect.h + 10 - noFileBtn.getNormalRect()->h);
+		}
 		noFileBtn.update();
 	}
 	/*
