@@ -225,6 +225,8 @@ void GUI_OpenWindow() {
 	RENDERER = SDL_CreateRenderer(WINDOW, -1, 0);
 	SDL_SetRenderDrawColor(RENDERER, COLOR.BG.r, COLOR.BG.g, COLOR.BG.b, 255);
 	SDL_RenderClear(RENDERER);
+	
+	//set minimum window size
 
 	menuBarInit();
 	documentViewInit();

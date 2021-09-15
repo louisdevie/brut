@@ -37,3 +37,7 @@ void renderText(int framew, int scrollY, int frameH) {
 		SDL_FreeSurface(surface);
 	}
 }
+
+int findLine(int y) {}
+int findChunk(int line, int x) {}
+int findChar(int line, int chunk, int x) {}

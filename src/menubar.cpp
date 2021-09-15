@@ -19,7 +19,13 @@ SDL_Rect menuBarTexDst[NTABS];
 int menuBarFocus;
 int prevMenuBarFocus;
 
+int WIDTH_MINIMUM, WIDTH_ICONSONLY, WIDTH_ALWAYSLABELED;
+
 void menuBarInit() {
+	WIDTH_MINIMUM = 270;
+	WIDTH_ICONSONLY = 0; // TODO : if called after menuBarTextureSize, we can calculate it based on
+	WIDTH_ALWAYSLABELED = 0; // the textures size; else find another solution
+	
 	menuBarFocus = -1;
 	prevMenuBarFocus = -2;
 

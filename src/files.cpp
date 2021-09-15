@@ -37,3 +37,7 @@ int removeFile(int file) {
 		return file-1;
 	}
 }
+
+void editFile(int file, size_t start, size_t span, std::string replacementText) {
+	openFiles[file].content.replace(start, span, replacementText);
+}
