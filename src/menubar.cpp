@@ -19,10 +19,13 @@ SDL_Rect menuBarTexDst[NTABS];
 int menuBarFocus;
 int prevMenuBarFocus;
 
-int WIDTH_MINIMUM, WIDTH_ICONSONLY, WIDTH_ALWAYSLABELED;
+// width of the window :
+int	WIDTH_MINIMUM, // minimum width, when the buttons are square
+	WIDTH_ICONSONLY, // below this width, the buttons shouldn't expand
+	WIDTH_ALWAYSLABELED; // above this width, the button should always be expanded
 
 void menuBarInit() {
-	WIDTH_MINIMUM = 270;
+	WIDTH_MINIMUM = 20 + NTABS * 50;
 	WIDTH_ICONSONLY = 0; // TODO : if called after menuBarTextureSize, we can calculate it based on
 	WIDTH_ALWAYSLABELED = 0; // the textures size; else find another solution
 	

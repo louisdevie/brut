@@ -225,12 +225,12 @@ void GUI_OpenWindow() {
 	RENDERER = SDL_CreateRenderer(WINDOW, -1, 0);
 	SDL_SetRenderDrawColor(RENDERER, COLOR.BG.r, COLOR.BG.g, COLOR.BG.b, 255);
 	SDL_RenderClear(RENDERER);
-	
-	//set minimum window size
 
 	menuBarInit();
 	documentViewInit();
 	noFileViewInit();
+
+	SDL_SetWindowMinimumSize(WINDOW, WIDTH_MINIMUM, 200);
 
 	view = STARTUP;
 	lastView = STARTUP;
@@ -254,10 +254,12 @@ void slideView() {
 	if (dx+dy == 0) {
 		return;
 	}
+	int adx = std::abs(dx);
+	int ady = std::abs(dy);
 	if (dx != 0) {
-		if (dx<5 && dx>-5) {
+		if (adx<5) {
 			_viewX = _targetViewX;
-			if (dy<5 && dy>-5) {
+			if (ady<5) {
 				lastView = view;
 			}
 		} else {
@@ -265,8 +267,11 @@ void slideView() {
 		}
 	}
 	if (dy != 0) {
-		if (dy<5 && dy>-5) {
+		if (ady<5) {
 			_viewY = _targetViewY;
+			if (adx<5) {
+				lastView = view;
+			}
 		} else {
 			_viewY += dy / 5;
 		}
@@ -425,7 +430,7 @@ void updateDocnameTexture(int i) {
 }
 
 void drawNoFileView() {
-	if (view == NOFILE) {
+	if (view == NOFILE || lastView == NOFILE) {
 		SDL_SetRenderDrawColor(RENDERER, noFileBtn.getColorRed(), noFileBtn.getColorGreen(), noFileBtn.getColorBlue(), 255);
 		SDL_RenderFillRect(RENDERER, noFileBtn.getRect());
 		SDL_RenderCopy(RENDERER, TEXTURE_NOFILE, NULL, noFileGetRect());

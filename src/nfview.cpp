@@ -38,28 +38,16 @@ bool noFileViewMouseUp(int btn, int mouseX, int mouseY) {
 }
 
 void noFileViewUpdate() {
-	if (view == NOFILE) {
-		if (lastView != NOFILE || sizeChanged) {
-			noFileRect.x = - WIDTH/2 - noFileRect.w/2 - viewX;
-			noFileRect.y = 30 + HEIGHT/2 - noFileRect.h/2 - viewY;
-			noFileBtn.place(
-				noFileRect.x + noFileRect.w/2 - noFileBtn.getNormalRect()->w/2,
-				noFileRect.y + noFileRect.h + 10 - noFileBtn.getNormalRect()->h);
-		}
+	if (((view == NOFILE) xor (lastView == NOFILE)) or ((view == NOFILE) and sizeChanged)) {
+		noFileRect.x = - WIDTH/2 - noFileRect.w/2 - viewX;
+		noFileRect.y = 30 + HEIGHT/2 - noFileRect.h/2 - viewY;
+		noFileBtn.place(
+			noFileRect.x + noFileRect.w/2 - noFileBtn.getNormalRect()->w/2,
+			noFileRect.y + noFileRect.h + 10 - noFileBtn.getNormalRect()->h  );
+	}
+	if ((view == NOFILE) or (lastView == NOFILE)) {
 		noFileBtn.update();
 	}
-	/*
-	if (mode != prevMode) {
-		if (lastView == NOFILE) {
-			noFileRect.x = mainViewRect.x - 10 - mainViewRect.w/2 - noFileRect.w/2;
-			noFileRect.y = mainViewRect.y + mainViewRect.h/2 - noFileRect.h/2;
-			noFileBtn.place(
-				noFileRect.x + noFileRect.w/2 - noFileBtn.getNormalRect()->w/2,
-				noFileRect.y + noFileRect.h + 10 - noFileBtn.getNormalRect()->h  );
-			noFileBtn.update();
-		}
-	}
-	*/
 }
 
 void noFileTextureSize(int w, int h, int w2, int h2) {

@@ -230,15 +230,38 @@ int viewY;
 void switchToView(int newView) {
 	if (newView != view) {
 		view = newView;
-		if (lastView == STARTUP) {
-			if (view == NOFILE) {
+		switch (lastView) {
+		case STARTUP:
+			switch (view) {
+			case NOFILE:
 				debugMsg("UTILS: switched from STARTUP to NOFILE");
 				_viewX = -1000;
 				_viewY = 1000;
 				_targetViewX = -1000;
 				_targetViewY = 0;
+				break;
+
+			default:
+				debugMsg("UTILS: switched from STARTUP to UNKNOWN");
 			}
-		}
+			break;
+
+		case NOFILE:
+			switch (view) {
+			case DOCUMENT:
+				debugMsg("UTILS: switched from NOFILE to DOCUMENT");
+				_targetViewX = 0;
+				_targetViewY = 0;
+				break;
+
+			default:
+				debugMsg("UTILS: switched from NOFILE to UNKNOWN");
+			}
+			break;
+
+		default:
+			debugMsg("UTILS: switched from UNKNOWN to UNKNOWN");
+		} 
 	}
 }
 
