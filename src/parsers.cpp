@@ -1,6 +1,6 @@
 #include "utils.cpp"
 
-// use unsigned ints instead ?
+// use uint16_t instead ?
 const int _STYLE_LINEEND = 1; // to indicate the chunk is the last of the line/paragraph
 const int _STYLE_MARKUP = 2;
 const int _STYLE_BOLD = 4;
@@ -11,7 +11,7 @@ const int _STYLE_TITLE = 64;   // four sizes of text :
 const int _STYLE_SECTION = 128; // nothing, SECTION, SECTION+TITLE, TITLE
 const int _STYLE_MONOSPACE = 256; // inline code / code block
 const int _STYLE_QUOTE = 512;
-const int _STYLE_AUTHOR = 1024; // quote block author
+const int _STYLE_AUTHOR = 1024; // quote author
 const int _STYLE_LINK = 2048;
 const int _STYLE_HIGHLIGHTED = 4096;
 

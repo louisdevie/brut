@@ -300,6 +300,8 @@ void GUI_HandleEvents()
 			}
 
 		case SDL_MOUSEMOTION:
+			lastKnownMouseX = event.motion.x;
+			lastKnownMouseY = event.motion.y;
 			if (menuBarMouseMotion(event.motion.x, event.motion.y)) {break;}
 			if (documentViewMouseMotion(event.motion.x, event.motion.y)) {break;}			
 			if (noFileViewMouseMotion(event.motion.x, event.motion.y)) {break;}
@@ -356,15 +358,8 @@ void drawMenuBar() {
 	}
 }
 
-void drawDocumentView() {/*
-	switch (mode) {
-	case NOFILE:
-		SDL_SetRenderDrawColor(RENDERER, noFileBtn.getColorRed(), noFileBtn.getColorGreen(), noFileBtn.getColorBlue(), 255);
-		SDL_RenderFillRect(RENDERER, noFileBtn.getRect());
-		SDL_RenderCopy(RENDERER, TEXTURE_NOFILE, NULL, noFileGetRect());
-		break;
-
-	case DOCUMENT:
+void drawDocumentView() {
+	if (view == DOCUMENT || lastView == DOCUMENT) {
 		SDL_SetRenderDrawColor(RENDERER, COLOR.TAB.r, COLOR.TAB.g, COLOR.TAB.b, 255);
 		SDL_RenderFillRect(RENDERER, newDocumentGetRect());
 		SDL_RenderCopy(RENDERER, TEXTURE_TABICON[0], NULL, newDocumentGetRect());
@@ -384,7 +379,7 @@ void drawDocumentView() {/*
 			}
 		}
 		SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
-		SDL_RenderFillRect(RENDERER, documentViewGetRect());
+		SDL_RenderFillRect(RENDERER, getDocumentRect());
 		if (textChanged) {
 			renderText(0, 0, 0);
 			if (RTEX) {
@@ -393,33 +388,8 @@ void drawDocumentView() {/*
 			RTEX = SDL_CreateTextureFromSurface(RENDERER, RENDERED_TEXT);
 			textChanged = false;
 		}
-		SDL_Rect rect = {documentRect.x+10, documentRect.y+10, 100, 100};
-		SDL_RenderCopy(RENDERER, RTEX, NULL, &rect);
-		break;
+		SDL_RenderCopy(RENDERER, RTEX, NULL, getTextRect());
 	}
-	if (mode != prevMode) {
-		switch (prevMode) {
-		case NOFILE:
-			SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
-			SDL_RenderFillRect(RENDERER, noFileBtn.getRect());
-			SDL_RenderCopy(RENDERER, TEXTURE_NOFILE, NULL, noFileGetRect());
-			break;
-
-		case DOCUMENT:
-			SDL_SetRenderDrawColor(RENDERER, COLOR.TAB.r, COLOR.TAB.g, COLOR.TAB.b, 255);
-			SDL_RenderFillRect(RENDERER, newDocumentGetRect());
-			SDL_RenderCopy(RENDERER, TEXTURE_TABICON[0], NULL, newDocumentGetRect());
-			for (int i=0; i<openFilesCount; i++) {
-				SDL_SetRenderDrawColor(RENDERER, COLOR.TAB.r, COLOR.TAB.g, COLOR.TAB.b, 255);
-				SDL_RenderFillRect(RENDERER, getTabRect(i));
-				SDL_RenderCopy(RENDERER, TEXTURE_DOCNAME[i], getTabSrcRect(i), getTabDstRect(i));
-				SDL_RenderCopy(RENDERER, TEXTURE_TABICON[1], NULL, getTabIconRect(i));
-			}
-			SDL_SetRenderDrawColor(RENDERER, COLOR.FG.r, COLOR.FG.g, COLOR.FG.b, 255);
-			SDL_RenderFillRect(RENDERER, documentViewGetRect());
-			break;
-		}
-	}*/
 }
 
 void updateDocnameTexture(int i) {

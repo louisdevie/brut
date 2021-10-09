@@ -13,13 +13,21 @@ SDL_Rect documentTabIconRect[MAXDOCS];
 int documentTabPadding;
 int selectedDocument;
 bool textChanged;
-SDL_Rect documentRect;
 SDL_Rect newDocumentRect;
 Button closeTabBtn;
 
-void documentViewInit() {/*
-	mainViewRect.y = 70;
+SDL_Rect documentRect;
+SDL_Rect textRect;
+
+void documentViewInit() {
+	documentRect.x = -WIDTH;
 	documentRect.y = 95;
+	documentRect.w = WIDTH - 20;
+	documentRect.h = HEIGHT - 105;
+	textRect.x = -100;
+	textRect.y = 105;
+	textRect.w = 100;
+	textRect.h = 100;
 	newDocumentRect.x = -25;
 	newDocumentRect.y = 70;
 	newDocumentRect.h = 25;
@@ -32,91 +40,43 @@ void documentViewInit() {/*
 		documentTabIconRect[i].w = 25;
 		documentTabIconRect[i].h = 25;
 	}
-	mode = STARTUP;
-	prevMode = STARTUP;
-	startupcounter = 10;
 
 	closeTabBtn.init();
 	closeTabBtn.resize(25, 25);
 	closeTabBtn.place(0, -25);
 	closeTabBtn.bindTo(closeFile);
-
-	noFileBtn.init();
-	noFileBtn.bindTo(createNewFile);
-
-	selectedDocument = -1;*/
 }
 
-bool documentViewMouseMotion(int mouseX, int mouseY) {/*
-	switch (mode) {
-	case NOFILE:
-		return noFileBtn.mouseMotion(mouseX, mouseY);
-
-	case DOCUMENT:
+bool documentViewMouseMotion(int mouseX, int mouseY) {
+	if (view == DOCUMENT) {
 		return closeTabBtn.mouseMotion(mouseX, mouseY);
-	}*/
+	}
 	return false;
 }
 
-bool documentViewMouseDown(int btn, int mouseX, int mouseY) {/*
-	switch (mode) {
-	case NOFILE:
-		if (btn == SDL_BUTTON_LEFT) {
-			return noFileBtn.leftMouseDown(mouseX, mouseY);
-		}
-		break;
-
-	case DOCUMENT:
+bool documentViewMouseDown(int btn, int mouseX, int mouseY) {
+	if (view == DOCUMENT) {
 		if (btn == SDL_BUTTON_LEFT) {
 			return closeTabBtn.leftMouseDown(mouseX, mouseY);
 		}
-		break;
-	}*/
+	}
 	return false;
 }
 
-bool documentViewMouseUp(int btn, int mouseX, int mouseY) {/*
-	switch (mode) {
-	case NOFILE:
-		if (btn == SDL_BUTTON_LEFT) {
-			return noFileBtn.leftMouseUp(mouseX, mouseY);
-		}
-		break;
-
-	case DOCUMENT:
+bool documentViewMouseUp(int btn, int mouseX, int mouseY) {
+	if (view == DOCUMENT) {
 		if (btn == SDL_BUTTON_LEFT) {
 			return closeTabBtn.leftMouseUp(mouseX, mouseY);
 		}
-		break;
-	}*/
+	}
 	return false;
 }
 
-void documentViewUpdate() {/*
-	switch (mode) {
-	case STARTUP:
-		// wait a little at startup
-		if (startupcounter) {
-			startupcounter --;
-		} else {
-			setMode(NOFILE);
-		}
-		break;
-
-	case NOFILE:
-		noFileRect.x = mainViewRect.x + mainViewRect.w/2 - noFileRect.w/2;
-		noFileRect.y = mainViewRect.y + mainViewRect.h/2 - noFileRect.h/2;
-		noFileBtn.place(
-			noFileRect.x + noFileRect.w/2 - noFileBtn.getNormalRect()->w/2,
-			noFileRect.y + noFileRect.h + 10 - noFileBtn.getNormalRect()->h  );
-		noFileBtn.update();
-		break;
-
-	case DOCUMENT:
-		int x = getViewX()+10;
+void documentViewUpdate() {
+	if (view == DOCUMENT xor lastView == DOCUMENT) {
+		int x = 10 - viewX;
 		documentRect.x = x;
-		documentRect.w = mainViewRect.w;
-		documentRect.h = mainViewRect.h;
+		textRect.x = x+10;
 		for (int i=0; i<openFilesCount; i++) {
 			documentTabRect[i].x = x;
 			documentTabRect[i].w = 200;
@@ -127,54 +87,29 @@ void documentViewUpdate() {/*
 			x += 204;
 			if (i == selectedDocument) {
 				closeTabBtn.place(x-29, 70);
-				closeTabBtn.update();
 			}
 		}
 		newDocumentRect.x = x;
-		break;
 	}
-
-	if (mode != prevMode) {
-		switch (prevMode) {
-		case NOFILE:
-			noFileRect.x = mainViewRect.x - 10 - mainViewRect.w/2 - noFileRect.w/2;
-			noFileRect.y = mainViewRect.y + mainViewRect.h/2 - noFileRect.h/2;
-			noFileBtn.place(
-				noFileRect.x + noFileRect.w/2 - noFileBtn.getNormalRect()->w/2,
-				noFileRect.y + noFileRect.h + 10 - noFileBtn.getNormalRect()->h  );
-			noFileBtn.update();
-			break;
-
-		case DOCUMENT:
-			int x = getViewX()-10-mainViewRect.w;
-			documentRect.x = x;
-			documentRect.w = mainViewRect.w;
-			documentRect.h = mainViewRect.h;
-			for (int i=0; i<openFilesCount; i++) {
-				documentTabRect[i].x = x;
-				documentTabRect[i].w = 200;
-				documentTabSrcRect[i].w = mini(170-documentTabPadding, documentTabTexW[i]);
-				documentTabDstRect[i].x = x+documentTabPadding+5;
-				documentTabDstRect[i].w = documentTabSrcRect[i].w;
-				documentTabIconRect[i].x = x+175;
-				x += 204;
-			}
-			newDocumentRect.x = x;
-			break;
+	if (view == DOCUMENT) {
+		closeTabBtn.update();
+		if (sizeChanged) {
+			documentRect.w = WIDTH - 20;
+			documentRect.h = HEIGHT - 105;
 		}
 	}
-
-	mainViewRect.x = getViewX()+10;
-	mainViewRect.w = WIDTH-20;
-	mainViewRect.h = HEIGHT-115;*/
 }
 
-SDL_Rect *documentViewGetRect() {
+SDL_Rect *getDocumentRect() {
 	return &documentRect;
 }
 
 SDL_Rect *newDocumentGetRect() {
 	return &newDocumentRect;
+}
+
+SDL_Rect *getTextRect() {
+	return &textRect;
 }
 
 void docnameTextureSize(int i, int w, int h) {

@@ -50,7 +50,9 @@ void Button::place(int x, int y) {
 	this->normalrect.x = x;
 	this->normalrect.y = y;
 	this->isDownrect.x = x+2;
-	this->isDownrect.y = y+2; // the button shrink when clicked
+	this->isDownrect.y = y+2; // buttons shrink when clicked
+
+	this->hasFocus = isBoundedToSDLRect(lastKnownMouseX, lastKnownMouseY, &this->normalrect);
 }
 
 void Button::resize(int w, int h) {

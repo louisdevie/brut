@@ -15,6 +15,8 @@
 int WIDTH, HEIGHT;
 bool sizeChanged;
 
+int lastKnownMouseX, lastKnownMouseY;
+
 // resource type
 const int RES_ICON = 0;
 const int RES_FONT = 1;
@@ -256,6 +258,19 @@ void switchToView(int newView) {
 
 			default:
 				debugMsg("UTILS: switched from NOFILE to UNKNOWN");
+			}
+			break;
+
+		case DOCUMENT:
+			switch (view) {
+			case NOFILE:
+				debugMsg("UTILS: switched from DOCUMENT to NOFILE");
+				_targetViewX = -1000;
+				_targetViewY = 0;
+				break;
+
+			default:
+				debugMsg("UTILS: switched from DOCUMENT to UNKNOWN");
 			}
 			break;
 
