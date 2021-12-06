@@ -1,3 +1,5 @@
 # Specify filepatterns you want git to ignore.
 
 build
+
+WINSETUP.ps1
