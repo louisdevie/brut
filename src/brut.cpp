@@ -4,10 +4,13 @@
 
 /*	entry point of the app
 */
-
-int main(int argc, char** args)
+#ifdef _WIN32
+int main(int argc, char *argv[])
+#else
+int main(int argc, char** argv)
+#endif
 {
-	if (setup(argc, args)) {
+	if (setup(argc, argv)) {
 		return 0;
 	}
 
