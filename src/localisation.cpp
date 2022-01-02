@@ -67,13 +67,13 @@ int loadLanguage(std::string path) {
 			splitBegin(&buffer);
 			if (!split()) {return LANGERR_MISSINGFIELD;}
 			if (_LANG_APP_ID != "!" && splitResult != _LANG_APP_ID) {return LANGERR_FOREIGNAPP;}
-		} else if (i > 6) {
+		} else if (i > 1) {
 			_LANG_APP_TEXT.push_back({buffer, ""});
 		}
 		i++;
 	}
 	
-	if (i<7) {
+	if (i<2) {
 		return LANGERR_MISSINGFIELD;
 	}
 
