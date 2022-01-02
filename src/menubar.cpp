@@ -3,9 +3,9 @@
 /*	top menu bar
 */
 
-#define NTABS 6
 // number of buttons
 // idk why I called them "tabs"
+#define NTABS 6
 
 AnimatedInt menuBarButtonX[NTABS];
 int menuBarButtonY;
@@ -22,12 +22,12 @@ int prevMenuBarFocus;
 // width of the window :
 int	WIDTH_MINIMUM, // minimum width, when the buttons are square
 	WIDTH_ICONSONLY, // below this width, the buttons shouldn't expand
-	WIDTH_ALWAYSLABELED; // above this width, the button should always be expanded
+	WIDTH_ALWAYSLABELED; // above this width, the buttons should always be expanded
 
 void menuBarInit() {
 	WIDTH_MINIMUM = 20 + NTABS * 50;
-	WIDTH_ICONSONLY = 0; // TODO : if called after menuBarTextureSize, we can calculate it based on
-	WIDTH_ALWAYSLABELED = 0; // the textures size; else find another solution
+	WIDTH_ICONSONLY = WIDTH_MINIMUM;
+	WIDTH_ALWAYSLABELED = 0;
 	
 	menuBarFocus = -1;
 	prevMenuBarFocus = -2;
@@ -61,19 +61,21 @@ void menuBarUpdate() {
 			}
 		} else {
 			for (int i=0; i<NTABS; i++) {
-				if (i == menuBarFocus) {
-					menuBarButtonX[i].goTo(10+80*i);
-					menuBarButtonW[i].goTo(WIDTH+60-(80*NTABS));
-					menuBarTexW[i].goTo(menuBarTexSize[i]);
-				} else {
-					if (i < menuBarFocus) {
-						menuBarButtonX[i].goTo(10+80*i);
-						menuBarButtonW[i].goTo(80);
+				if (WIDTH > WIDTH_ICONSONLY) {
+					if (i == menuBarFocus) {
+						menuBarButtonX[i].goTo(10+50*i);
+						menuBarButtonW[i].goTo(WIDTH+60-(50*NTABS));
+						menuBarTexW[i].goTo(menuBarTexSize[i]);
 					} else {
-						menuBarButtonX[i].goTo(WIDTH-10-(80*(NTABS-i)));
-						menuBarButtonW[i].goTo(80);
+						if (i < menuBarFocus) {
+							menuBarButtonX[i].goTo(10+50*i);
+							menuBarButtonW[i].goTo(50);
+						} else {
+							menuBarButtonX[i].goTo(WIDTH-10-(50*(NTABS-i)));
+							menuBarButtonW[i].goTo(50);
+						}
+						menuBarTexW[i].goTo(32);
 					}
-					menuBarTexW[i].goTo(32);
 				}
 			}
 		}
@@ -114,6 +116,14 @@ void menuBarTextureSize(int i, int w) {
 	menuBarTexSrc[i].h = 32;
 	menuBarTexDst[i].h = 32;
 	menuBarTexDst[i].y = menuBarButtonY + menuBarButtonH/2 - 16;
+
+	int minw = w + 20 + (NTABS - 1)*50;
+	debugMsg("w = " + std::to_string(w));
+	debugMsg("minw = " + std::to_string(minw));
+	if (minw > WIDTH_ICONSONLY) {
+		WIDTH_ICONSONLY = minw;
+		debugMsg("WIDTH_ICONSONLY set to " + std::to_string(WIDTH_ICONSONLY));
+	}
 }
 
 SDL_Rect *menuBarGetSrcRect(int i) {
