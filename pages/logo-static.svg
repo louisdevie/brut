@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<svg
+   width="200px"
+   height="84px"
+   viewBox="0 0 200 84"
+   version="1.1"
+   id="svg5"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+      <path
+         d="M 0,0 h -6"
+         id="motionPath"/>      
+  </defs>
+  <g
+      id="volume">
+     <path
+         id="letterBFill"
+         style="fill:#6416a0;stroke:#6416a0;stroke-width:2px;stroke-linecap:square;opacity:0"
+         d="M 18,12 h 12 v 24 h 9 l 3,-3 v -6 l -3,-3 h -15 v -12 h 21 l 9,9 v 18 l -3,3 3,3 v 18 l -9,9 h -21 v -12 h 15 l 3,-3 v -6 l -3,-3 h -9 v 24 h -12 z">
+        <animate
+            id="anim2"
+            attributeName="opacity"
+            begin="1.4s"
+            values="0;1"
+            dur="0.1s"
+            calcMode="discrete"
+            fill="freeze"/>
+     </path>
+  </g>
+  <g
+      id="front">
+     <path
+         id="letterBFill"
+         style="fill:#ffffff;stroke:none;opacity:0"
+         d="M 18,12 h 12 v 24 h 9 l 3,-3 v -6 l -3,-3 h -15 v -12 h 21 l 9,9 v 18 l -3,3 3,3 v 18 l -9,9 h -21 v -12 h 15 l 3,-3 v -6 l -3,-3 h -9 v 24 h -12 z">
+        <animate
+            id="anim2"
+            attributeName="opacity"
+            begin="0.5s"
+            values="0;1"
+            dur="1s"
+            calcMode="linear"
+            fill="freeze"/>
+     </path>
+     <path
+         id="letterBOutline"
+         style="fill:none;stroke:#6416a0;stroke-width:2px;stroke-dasharray:190;stroke-dashoffset:190;stroke-linecap:square"
+         d="M 18,72 v -60 h 27 l 9,9 v 18 l -3,3 3,3 v 18 l -9,9 z">
+        <animate
+            id="anim1"
+            attributeName="stroke-dashoffset"
+            begin="0.5s"
+            values="190;0"
+            dur="1s"
+            calcMode="linear"
+            fill="freeze"/>
+     </path>
+     <path
+         id="letterBHole1"
+         style="fill:none;stroke:#6416a0;stroke-width:2px;stroke-dasharray:50;stroke-dashoffset:50;stroke-linecap:square"
+         d="M 30,24 h 9 l 3,3 v 6 l -3,3 h -9 z">
+        <animate
+            id="anim2"
+            attributeName="stroke-dashoffset"
+            begin="0.8s"
+            values="50;0"
+            dur="0.5s"
+            calcMode="linear"
+            fill="freeze"/>
+     </path>
+     <path
+         id="letterBHole2"
+         style="fill:none;stroke:#6416a0;stroke-width:2px;stroke-dasharray:50;stroke-dashoffset:50;stroke-linecap:square"
+         d="M 30,48 h 9 l 3,3 v 6 l -3,3 h -9 z">
+        <animate
+            id="anim3"
+            attributeName="stroke-dashoffset"
+            begin="1s"
+            values="50;0"
+            dur="0.5s"
+            calcMode="linear"
+            fill="freeze"/>
+     </path>
+     <animateMotion
+         begin="1.5"
+         dur="0.2s"
+         fill="freeze">
+        <mpath
+            xlink:href="#motionPath"/>
+     </animateMotion>
+  </g>
+</svg>

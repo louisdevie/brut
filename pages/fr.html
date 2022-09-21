@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Brut</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script>
+		const TITLES = ['Accueil', 'Fonctionnalités', 'Markdown']
+	</script>
+	<script src="script.js"></script>
+	<link rel="preload" type="image/svg+xml" as="image" href="button/solid.svg">
+	<link rel="preload" type="image/svg+xml" as="image" href="button/solid-hover.svg">
+</head>
+<body>
+	<header>
+		<div class="content">
+			<div id="logo">
+				<object id="logo-img" type="image/svg+xml" data="logo.svg"></object>
+				<span>UN ÉDITEUR DE TEXTE</span>
+			</div>
+			<div id="navbar">
+				<a id="tab-home"      class="tab" href="#!home" >Accueil</a>
+				<a id="tab-section-1" class="tab" href="#!section-1">Fonctionnalités</a>
+				<a id="tab-section-2" class="tab" href="#!section-2">Markdown Brut</a>
+			</div>
+		</div>
+	</header>
+	<main>
+		<div id="section-home" class="layout center">
+			<h1>ACCUEIL</h1>
+		</div>
+		<div id="section-section-1" class="layout center">
+			<h1>FONCTIONALITÉS</h1>
+		</div>
+		<div id="section-section-2" class="layout center">
+			<h1>LE MARKDOWN BRUT</h1>
+			<p>Un language de balisage discret et complet</p>
+			<div class="content">
+				<h2>Structure</h2>
+				<h3>Titres</h3>
+				<h3>Paragraphes</h3>
+				<h3>Sauts de ligne</h3>
+				<h3>Listes à puces</h3>
+				<h3>Listes numérotées</h3>
+				<h3>Citations</h3>
+				<h3>Cadres</h3>
+				<h2>Style</h2>
+				<h3>Italique</h3>
+				<h3>Gras</h3>
+				<h3>Souligné</h3>
+				<h3>Surligné</h3>
+				<h3>Encadré</h3>
+				<h3>Exposant</h3>
+				<h3>Indice</h3>
+			</div>
+		</div>
+	</main>
+</body>
+</html>

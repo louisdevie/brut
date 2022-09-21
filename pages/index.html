@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Brut</title>
+</head>
+<body>
+	<script>
+		const available_languages = ['fr'];
+
+		var user_languages = navigator.languages;
+
+		if (user_languages === undefined) {
+			user_languages = [navigator.language];
+		}
+
+		var exit = false;
+		for (const user of user_languages) {
+			for (const site of available_languages) {
+				if (user.toLowerCase().startsWith(site)) {
+					window.location.href = site;
+					exit = true;
+				}
+				if (exit) break;
+			}
+			if (exit) break;
+		}
+
+		if (!exit) {
+			window.location.href = 'sorry';
+		}
+	</script>
+</body>
+</html>
